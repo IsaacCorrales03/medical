@@ -2,7 +2,7 @@
 
 Este proyecto consiste en una aplicación web desarrollada con Flask que permite la gestión de medicamentos, interacciones entre ellos, y alarmas para recordatorios de toma de medicación.
 
-![Estructura del Proyecto](https://placehold.co/600x400?text=Estructura+del+Proyecto)
+![Estructura del Proyecto](https://raw.githubusercontent.com/IsaacCorrales03/medical/refs/heads/main/estructura.jpg)
 
 ## Estructura del Proyecto
 
@@ -137,3 +137,8 @@ El desarrollo del backend está en sus etapas iniciales, con la implementación 
 La migración planeada de SQLite a PostgreSQL representa un paso hacia una aplicación más robusta y escalable, indicando la intención de evolucionar el proyecto hacia un sistema más completo y profesional.
 
 ## Como instalar
+```bash
+git clone "https://github.com/IsaacCorrales03/medical.git"
+pip install -r requirements.txt
+python server.py
+```
