@@ -1,0 +1,210 @@
+{% extends 'template.html' %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+{% block content %}
+    <!-- Hero con buscador -->
+    <div class="search-container py-16 sm:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl">
+                    <span class="block">Toda la información sobre</span>
+                    <span class="block">medicamentos a tu alcance</span>
+                </h1>
+                <p class="mt-3 max-w-md mx-auto text-base text-white opacity-90 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                    Busca información precisa y actualizada sobre dosis, efectos secundarios, interacciones y mucho más.
+                </p>
+                <div class="mt-10 max-w-xl mx-auto">
+                    <div class="flex items-center search-animation bg-white rounded-full shadow-xl p-1">
+                        <div class="pl-4 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <input class="w-full pl-3 pr-10 py-3 rounded-full text-gray-900 focus:outline-none" type="text" placeholder="Buscar medicamento (ej. Paracetamol, Ibuprofeno...)">
+                        <button class="bg-primary hover:bg-primary-light text-white font-bold py-3 px-6 rounded-full transition duration-150 ease-in-out mr-1">
+                            Buscar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+            <div class="flex flex-wrap justify-center gap-3">
+                <span class="suggest pill bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm">Paracetamol</span>
+                <span class="suggest pill bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm">Ibuprofeno</span>
+                <span class="suggest pill bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm">Amoxicilina</span>
+                <span class="suggest pill bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm">Omeprazol</span>
+                <span class="suggest pill bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm">Loratadina</span>
+                <span class="suggest pill bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm">Metformina</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Características -->
+    <div class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:text-center">
+                <h2 class="text-base text-primary font-semibold tracking-wide uppercase">Características</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                    Todo lo que necesitas saber sobre tus medicamentos
+                </p>
+                <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+                    Información completa y actualizada para ayudarte a entender tus tratamientos médicos
+                </p>
+            </div>
+
+            <div class="mt-16">
+                <div class="space-y-10 md:space-y-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-10">
+                    <div class="card bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-secondary text-white mb-4">
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Información Detallada</h3>
+                        <p class="mt-2 text-base text-gray-500">
+                            Accede a información completa sobre dosis, efectos secundarios, contraindicaciones y mecanismos de acción.
+                        </p>
+                    </div>
+
+                    <div class="card bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-primary text-white mb-4">
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Alertas e Interacciones</h3>
+                        <p class="mt-2 text-base text-gray-500">
+                            Conoce las posibles interacciones con otros medicamentos, alimentos o condiciones médicas.
+                        </p>
+                    </div>
+
+                    <div class="card bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-secondary-light text-white mb-4">
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Guías Prácticas</h3>
+                        <p class="mt-2 text-base text-gray-500">
+                            Instrucciones claras sobre cómo tomar los medicamentos y consejos para optimizar tu tratamiento.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de categorías -->
+    <div class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-gray-900 text-center mb-10">Explora por categorías</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="group bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
+                    <div class="bg-secondary-lighter h-2"></div>
+                    <div class="p-5">
+                        <svg class="h-8 w-8 text-secondary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        <h3 class="font-semibold text-lg text-gray-900 group-hover:text-secondary transition-colors duration-300">Cardiovasculares</h3>
+                        <p class="mt-1 text-sm text-gray-500">Antihipertensivos, anticoagulantes, estatinas...</p>
+                    </div>
+                </div>
+                
+                <div class="group bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
+                    <div class="bg-primary-light h-2"></div>
+                    <div class="p-5">
+                        <svg class="h-8 w-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z" />
+                        </svg>
+                        <h3 class="font-semibold text-lg text-gray-900 group-hover:text-primary transition-colors duration-300">Antibióticos</h3>
+                        <p class="mt-1 text-sm text-gray-500">Penicilinas, cefalosporinas, quinolonas...</p>
+                    </div>
+                </div>
+                
+                <div class="group bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
+                    <div class="bg-secondary h-2"></div>
+                    <div class="p-5">
+                        <svg class="h-8 w-8 text-secondary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        <h3 class="font-semibold text-lg text-gray-900 group-hover:text-secondary transition-colors duration-300">Analgésicos</h3>
+                        <p class="mt-1 text-sm text-gray-500">Anti-inflamatorios, opioides, antipiréticos...</p>
+                    </div>
+                </div>
+                
+                <div class="group bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
+                    <div class="bg-primary h-2"></div>
+                    <div class="p-5">
+                        <svg class="h-8 w-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <h3 class="font-semibold text-lg text-gray-900 group-hover:text-primary transition-colors duration-300">Sistema Nervioso</h3>
+                        <p class="mt-1 text-sm text-gray-500">Antidepresivos, ansiolíticos, antiepilépticos...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-10">
+                <a href="#" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-secondary hover:bg-secondary-light transition duration-150 ease-in-out">
+                    Ver todas las categorías
+                    <svg class="ml-2 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de información médica -->
+    <div class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                        Información médica confiable
+                    </h2>
+                    <p class="mt-3 max-w-3xl text-lg text-gray-500">
+                        Nuestro contenido es elaborado y revisado por profesionales de la salud para garantizar precisión y actualidad.
+                    </p>
+                    <div class="mt-8 space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <svg class="h-6 w-6 text-secondary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <p class="ml-3 text-base text-gray-500">
+                                <strong class="font-medium text-gray-900">Actualizada regularmente</strong> con los últimos avances y recomendaciones médicas.
+                            </p>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <svg class="h-6 w-6 text-secondary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <p class="ml-3 text-base text-gray-500">
+                                <strong class="font-medium text-gray-900">Validada por expertos</strong> en farmacología y medicina basada en evidencia.
+                            </p>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <svg class="h-6 w-6 text-secondary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <p class="ml-3 text-base text-gray-500">
+                                <strong class="font-medium text-gray-900">Explicada de forma clara</strong> para que cualquier persona pueda entenderla.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endblock %}
