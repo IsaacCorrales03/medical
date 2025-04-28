@@ -25,5 +25,14 @@ def register():
         pass
         # lógica de registro
 
+@app.route('/medicamentos', methods=['GET'])
+def medicamentos():
+    if request.args:
+        name = request.args.get('name')
+        medicamentos = my_db.get_medicamento_by_name(name)
+    else:
+        medicamentos = my_db.get_all_medicamentos()
+    return render_template('medicamentos.html', medicamentos=medicamentos)
+
 app.run(port=1010, debug=True)
 

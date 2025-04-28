@@ -15,8 +15,7 @@ El proyecto está organizado en carpetas para separar el código del servidor, l
 - `templates/`: Plantillas HTML con Jinja2
 
 ## Explicación del Código
-
-### Archivo Principal (app.py)
+## Archivo Principal (app.py)
 
 ```python
 from flask import * 
@@ -46,46 +45,100 @@ def register():
         pass
         # lógica de registro
 
+@app.route('/medicamentos', methods=['GET'])
+def medicamentos():
+    if request.args:
+        name = request.args.get('name')
+        medicamentos = my_db.get_medicamento_by_name(name)
+    else:
+        medicamentos = my_db.get_all_medicamentos()
+    return render_template('medicamentos.html', medicamentos=medicamentos)
+
 app.run(port=1010, debug=True)
 ```
 
-Este archivo es el punto de entrada de la aplicación Flask. Define tres rutas principales:
+Este archivo es el punto de entrada de la aplicación Flask. Define cuatro rutas principales:
 
 - **/** - La página de inicio que renderiza `index.html`
 - **/login** - Maneja tanto la visualización del formulario de inicio de sesión (GET) como el procesamiento del formulario enviado (POST)
 - **/register** - Similar a login, maneja la visualización y procesamiento del formulario de registro
+- **/medicamentos** - Muestra todos los medicamentos o permite filtrar por nombre mediante un parámetro de consulta
 
 El servidor se ejecuta en el puerto 1010 con el modo de depuración activado.
 
-### Gestor de Base de Datos (database.py)
+# Gestor de Base de Datos (database.py)
+
+## Descripción General
+
+El archivo `database.py` implementa un gestor de base de datos SQLite utilizando el patrón Singleton con seguridad para múltiples hilos. Esta implementación garantiza que las conexiones a la base de datos se manejen correctamente en entornos multi-hilo, evitando problemas de concurrencia.
+
+## Características Principales
+
+### Patrón Singleton Thread-Safe
+- Mantiene una única instancia de la clase a nivel de aplicación
+- Proporciona conexiones independientes para cada hilo
+- Utiliza bloqueos para evitar condiciones de carrera durante la inicialización
+
+### Gestión de Conexiones
+- Inicialización perezosa: las conexiones se crean solo cuando son necesarias
+- Cada hilo obtiene su propia conexión aislada
+- Cierre explícito de conexiones para liberar recursos
+
+### Estructura de la Base de Datos
+La clase gestiona dos tablas principales:
+
+1. **Usuarios**:
+   - `Id`: Identificador único autoincremental
+   - `Username`: Nombre de usuario (limitado a 25 caracteres)
+   - `Email`: Correo electrónico (limitado a 100 caracteres)
+   - `Password`: Contraseña almacenada (hasta 255 caracteres)
+
+2. **Medicamentos**:
+   - `Id`: Identificador único autoincremental
+   - `Nombre`: Nombre del medicamento
+   - `Uso`: Descripción del uso terapéutico
+   - `Dosis`: Información sobre la posología
+   - `Efectos_Secundarios`: Posibles efectos adversos
+   - `Recomendaciones_Alimenticias`: Consejos sobre alimentación relacionados con el medicamento
+
+## Métodos Disponibles
+
+### Gestión de Usuarios
+- `create_user(username, email, password)`: Registra un nuevo usuario en la base de datos
+
+### Gestión de Medicamentos
+- `add_medicamento(nombre, uso, dosis, efectos_secundarios, recomendaciones_alimenticias)`: Añade un nuevo medicamento
+- `get_medicamento_by_name(nombre)`: Busca medicamentos que coincidan parcialmente con el nombre proporcionado
+- `get_all_medicamentos()`: Obtiene todos los medicamentos almacenados
+- `update_medicamento(id, nombre, uso, dosis, efectos_secundarios, recomendaciones_alimenticias)`: Actualiza la información de un medicamento existente
+- `delete_medicamento(id)`: Elimina un medicamento de la base de datos
+
+### Utilidades
+- `create_tables()`: Crea las tablas necesarias si no existen
+- `close_connection()`: Cierra la conexión del hilo actual a la base de datos
+
+## Ejemplo de Uso
 
 ```python
-import sqlite3
+# Inicializar el gestor de base de datos
+db = DataBaseManager()
+db.create_tables()
 
-class DataBaseManager:
-    def __init__(self):
-        print("Iniciando base de datos...")
-        self.my_connection = sqlite3.connect('database.db')
-        self.my_cursor = self.my_connection.cursor()
-        self.create_tables()
-    
-    def create_tables(self):
-        users_table = """CREATE TABLE IF NOT EXISTS Usuarios(Id INTEGER PRIMARY KEY AUTOINCREMENT,  Username VARCHAR(25) NOT NULL, Email VARCHAR(100) NOT NULL, Password VARCHAR(255) NOT NULL)"""
-        self.my_cursor.execute(users_table)
-        self.my_connection.commit()
-        print("Tablas creadas...")
-    
-    def create_user(self, username, email, password):
-        self.my_cursor.execute("INSERT INTO Usuarios(Username, Email, Password) VALUES(?, ?, ?)", (username, email, password))
-        self.my_connection.commit()
-        print("Usuario creado...")
+# Añadir un medicamento
+db.add_medicamento(
+    nombre="Paracetamol",
+    uso="Alivio del dolor y reducción de la fiebre.",
+    dosis="500 mg cada 6 horas, no exceder 4 g al día.",
+    efectos_secundarios="Raras veces, daño hepático en dosis altas.",
+    recomendaciones_alimenticias="Puede tomarse con o sin alimentos."
+)
+
+# Buscar medicamentos por nombre
+resultados = db.get_medicamento_by_name("Para")
+
+# Cerrar la conexión cuando termine
+db.close_connection()
 ```
-
-Esta clase maneja las interacciones con la base de datos SQLite. Incluye:
-
-- **Inicialización**: Establece la conexión a la base de datos y crea las tablas necesarias si no existen.
-- **create_tables()**: Crea la tabla de Usuarios con campos para ID, nombre de usuario, email y contraseña.
-- **create_user()**: Método para insertar un nuevo usuario en la base de datos.
 
 ## Front-end con Tailwind CSS
 
