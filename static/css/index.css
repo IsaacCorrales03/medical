@@ -7,7 +7,27 @@
     transform: translateY(-2px);
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
-
+.pill-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+.pill {
+    background-color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #f74f8c;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: 9999px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+}
+.pill:hover {
+    background-color: #eff6ff; /* blue-50 */
+}
 .card {
     transition: all 0.3s ease;
 }

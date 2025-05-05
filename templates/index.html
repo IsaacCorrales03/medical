@@ -37,14 +37,9 @@
             </div>
         </div>
     </div>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
-        <div class="flex flex-wrap justify-center gap-3">
-            <span class="suggest pill bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm">Paracetamol</span>
-            <span class="suggest pill bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm">Ibuprofeno</span>
-            <span class="suggest pill bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm">Amoxicilina</span>
-            <span class="suggest pill bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm">Omeprazol</span>
-            <span class="suggest pill bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm">Loratadina</span>
-            <span class="suggest pill bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm">Metformina</span>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 ">
+        <div class="flex flex-wrap justify-center gap-3 " id="medication-pills">
+
         </div>
     </div>
 </div>
@@ -263,4 +258,35 @@
     </svg>
     Ayuda
 </a>
+<script>
+    // List of medications
+    const medications = [
+        "Paracetamol",
+        "Ibuprofeno",
+        "Amoxicilina",
+        "Omeprazol",
+        "Loratadina",
+        "Metformina"
+    ];
+
+    // Function to handle pill click
+    function handlePillClick(medicationName) {
+        // Redirect to the medication page with the name as a query parameter
+        window.location.href = `/medicamentos?name=${encodeURIComponent(medicationName)}`;
+    }
+
+    // Create and add pills to container
+    document.addEventListener('DOMContentLoaded', function() {
+        const pillContainer = document.getElementById('medication-pills');
+        
+        medications.forEach(medication => {
+            const pillButton = document.createElement('button');
+            pillButton.className = 'pill';
+            pillButton.textContent = medication;
+            pillButton.addEventListener('click', () => handlePillClick(medication));
+            
+            pillContainer.appendChild(pillButton);
+        });
+    });
+</script>
 {% endblock %}

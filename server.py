@@ -140,6 +140,11 @@ def get_medication():
         medicamentos.append(medicamento_dict)
     
     return jsonify(medicamentos)
+@app.route('/condiciones')
+def condiciones():
+    return render_template('condiciones.html')
+
+
 @app.route('/medicamentos', methods=['GET'])
 def medicamentos():
     if request.args:
