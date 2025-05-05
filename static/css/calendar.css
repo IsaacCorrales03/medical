@@ -1,0 +1,193 @@
+/* Estilos para el calendario */
+.calendar-day {
+    height: 40px;
+    position: relative;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    overflow: visible;
+}
+
+.calendar-day:hover {
+    background-color: #f3f4f6;
+}
+
+.calendar-day.empty {
+    background-color: transparent;
+}
+
+.calendar-day.current-day {
+    background-color: #e0f2fe;
+    font-weight: bold;
+}
+
+.calendar-day.has-medications {
+    position: relative;
+}
+
+/* Indicador de medicamento */
+.medication-indicator {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background-color: #ef4444;
+    border-radius: 50%;
+}
+#medicationModal {
+    z-index: 1000;
+}
+/* Tooltip para mostrar medicamentos */
+.medication-tooltip {
+    position: absolute;
+    z-index: 1;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 8px;
+    width: 200px;
+    text-align: left;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 8px;
+    display: none;
+    white-space: normal;
+}
+
+.calendar-day.has-medications:hover .medication-tooltip {
+    display: block;
+}
+
+/* Estilos para el modal */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 40;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+/* Estilos adicionales para el calendario de medicamentos */
+
+/* Asegurarse de que el contenedor de días tenga un buen espaciado */
+#calendarDays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+/* Estilo para los días del calendario */
+.calendar-day {
+    min-height: 40px;
+    position: relative;
+    border-radius: 4px;
+    overflow: visible;
+}
+
+/* Estilo para los días con medicamentos */
+.has-medications {
+    transition: all 0.2s ease;
+}
+
+.has-medications:hover {
+    background-color: #f3f4f6;
+    transform: scale(1.05);
+    z-index: 5;
+}
+
+/* Estilos para el tooltip */
+.medication-tooltip {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+}
+
+.has-medications:hover .medication-tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Estilo para el indicador de medicamento */
+.medication-indicator {
+    transition: transform 0.2s ease;
+}
+
+.has-medications:hover .medication-indicator {
+    transform: translate(-50%, 0) scale(1.2);
+}
+
+/* Estilo para días vacíos */
+.calendar-day.empty {
+    background-color: #f9fafb;
+}
+.border-t.border-gray-200.p-6 {
+    overflow: visible;
+  }
+  
+  /* Calendar grid container needs to be overflow visible */
+  #calendarDays {
+    overflow: visible;
+    position: relative;
+  }
+  
+  /* Individual day cells need position relative to anchor tooltips */
+  .calendar-day {
+    position: relative;
+    overflow: visible;
+  }
+  
+  /* Tooltip styling with improved positioning */
+  .medication-tooltip {
+    position: absolute;
+    z-index: 50;
+    background-color: white;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 12rem;
+    text-align: left;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    /* Position tooltip with more reliable method */
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    /* Ensure tooltip isn't cutoff */
+    white-space: normal;
+    word-break: break-word;
+  }
+  
+  /* Add a small arrow at the bottom of tooltip */
+  .medication-tooltip::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px 5px 0;
+    border-style: solid;
+    border-color: white transparent transparent transparent;
+  }
+  
+  /* Make tooltip visible when needed */
+  .medication-tooltip.visible {
+    opacity: 1;
+  }

@@ -134,9 +134,20 @@
                 </div>
             </div>
             
+            <!-- Mensajes de error -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="p-4 {% if category == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %} rounded-lg mt-4">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
             <!-- Formulario de login -->
             <div class="p-6 space-y-6">
-                <form class="space-y-5">
+                <form class="space-y-5" action="{{ url_for('login') }}" method="POST">
                     <!-- Campo email -->
                     <div class="space-y-2">
                         <label for="email" class="block text-sm font-medium text-gray-700">Correo electrónico</label>
@@ -154,9 +165,7 @@
                     <div class="space-y-2">
                         <div class="flex justify-between">
                             <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
-                            <a href="#" class="text-sm font-medium text-cyan-500 hover:text-cyan-400 transition">
-                                ¿Olvidaste la contraseña?
-                            </a>
+
                         </div>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -180,7 +189,7 @@
                     <!-- Botón de envío -->
                     <div>
                         <button type="submit" 
-                                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-magenta-500 hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-magenta-500 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
+                                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium bg-magenta-500 hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-magenta-500 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
                             Iniciar sesión
                         </button>
                     </div>
@@ -191,21 +200,6 @@
                     <div class="absolute inset-0 flex items-center">
                         <div class="w-full border-t border-gray-300"></div>
                     </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-2 bg-white text-gray-500">o continúa con</span>
-                    </div>
-                </div>
-                
-                <!-- Botones de redes sociales -->
-                <div class="grid grid-cols-2 gap-4">
-                    <button class="flex items-center justify-center py-2 px-4 border rounded-lg bg-gray-50 hover:bg-gray-100 transition duration-200">
-                        <i class="fab fa-google text-lg text-red-500 mr-2"></i>
-                        <span class="text-sm font-medium text-gray-700">Google</span>
-                    </button>
-                    <button class="flex items-center justify-center py-2 px-4 border rounded-lg bg-gray-50 hover:bg-gray-100 transition duration-200">
-                        <i class="fab fa-apple text-lg text-gray-800 mr-2"></i>
-                        <span class="text-sm font-medium text-gray-700">Apple</span>
-                    </button>
                 </div>
             </div>
             
@@ -220,9 +214,9 @@
                     </p>
                 </div>
                 <div class="flex justify-center mt-5">
-                    <button class="py-2.5 px-6 rounded-lg text-white font-medium bg-cyan-500 hover:bg-cyan-400 transition duration-200 shadow-sm hover:shadow transform hover:scale-[1.02] active:scale-[0.98]">
+                    <a href="{{ url_for('register') }}" class="py-2.5 px-6 rounded-lg text-white font-medium bg-cyan-500 hover:bg-cyan-400 transition duration-200 shadow-sm hover:shadow transform hover:scale-[1.02] active:scale-[0.98]">
                         Crear cuenta gratuita
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -237,5 +231,4 @@
         </div>
     </div>
 </main>
-
 
