@@ -197,7 +197,7 @@ class DataBaseManager:
             "id": usuario_data[0],
             "nombre": usuario_data[1],
             "email": usuario_data[2],
-            "telefono": usuario_data[5],  # Asumiendo que el teléfono está en la posición 4
+            "telefono": usuario_data[3],  # Asumiendo que el teléfono está en la posición 4
             "tipo": usuario_data[4]       # Asumiendo que el tipo está en la posición 5
         }
 
