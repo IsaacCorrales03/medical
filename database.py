@@ -89,6 +89,7 @@ class DataBaseManager:
         cursor = self._get_cursor()
         cursor.execute("SELECT dia, hora, nombre, id FROM Recordatorios WHERE paciente_id = ?", (id_paciente,))
         return cursor.fetchall()
+    
     def get_recordatorios_por_fecha(self, fecha):
         cursor = self._get_cursor()
         cursor.execute("SELECT hora, nombre, user_email FROM Recordatorios WHERE dia = ?", (fecha,))

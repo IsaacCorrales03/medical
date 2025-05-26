@@ -2,10 +2,13 @@ from flask import *
 from database import DataBaseManager
 from flask_mail import Message, Mail
 from dotenv import load_dotenv
+from reminder import Reminder
 import os
 load_dotenv()
 
 app = Flask("__main__")
+reminder_system = Reminder()
+
 app.static_folder = 'static'
 
 # Configuración desde variables de entorno
@@ -22,7 +25,7 @@ mail = Mail(app)
 
 from flask import request, render_template
 from flask_mail import Message
-
+url_service = ''
 @app.route('/email')
 def enviar_correo():
     tipo = request.args.get('tipo')  # novedades, suscripcion, medicamento
@@ -62,7 +65,8 @@ def enviar_correo():
             'correo_recordatorio.html',
             hora= hora,
             nombre_usuario=nombre_usuario,
-            medicamento=nombre
+            medicamento=nombre,
+            url_service=url_service
         )
         asunto = 'Recordatorio de Medicación'
     else:
@@ -138,6 +142,8 @@ def delete_rec_by_id():
         my_db.delete_recordatorio_by_id(id)
 
         print(f"[Flask] Recordatorio con ID {id} eliminado correctamente.")
+        reminder_system.restart_daily_system()
+
         return jsonify({'status': 'ok'}), 200
 
     except Exception as e:
@@ -249,6 +255,7 @@ def devtools_json():
 
 @app.route('/add_recordatorio', methods=['POST'])
 def add_recordatorio():
+    
     data = request.get_json()
     paciente_id = data.get('paciente_id')
     dia = data.get('dia')
@@ -257,7 +264,17 @@ def add_recordatorio():
     user_email = data.get('user_email')
 
     my_db.add_recordatorio(paciente_id=paciente_id,dia=dia, hora=hora, nombre=nombre, user_email=user_email)
+    reminder_system.restart_daily_system()
     return {'status': 'Ok'}
+
+@app.route('/check')
+def check():
+    data = request.args
+    nombre = data.get('nombre')
+    dia = data.get('dia')
+    hora = data.get('hora')
+    my_db.delete_recordatorio(dia, hora, nombre)
+    return 200
 
 @app.route('/get_recordatorios', methods=['POST'])
 def get_recordatios():
@@ -278,6 +295,8 @@ def medicamentos():
     else:
         medicamentos = my_db.get_all_medicamentos()
     return render_template('medicamentos.html', medicamentos=medicamentos)
-pass
+
 if __name__ == '__main__':
-    app.run(debug=True, port=1010, )
+
+    reminder_system.start_daily_reminder_system()
+    app.run(debug=True, port=1010)

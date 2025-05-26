@@ -135,8 +135,7 @@ class Reminder:
                 
             else:
                 print(f"Recordatorio '{recordatorio['nombre']}' a las {hora_recordatorio} ya pasó")
-                # Eliminar recordatorio que ya pasó
-                self._eliminar_recordatorio_pasado(recordatorio, fecha)
+
                 
         except ValueError as e:
             print(f"Error al procesar tiempo del recordatorio: {e}")
@@ -152,38 +151,11 @@ class Reminder:
         """
         requests.get(f'{self.service_url}tipo=recordatorio&nombre={recordatorio['nombre']}&hora={recordatorio['hora']}&correo={recordatorio['user_email']}')
 
-        # Eliminar recordatorio de la base de datos
-        try:
-            self.my_db.delete_recordatorio(
-                fecha, 
-                recordatorio['hora'], 
-                recordatorio['nombre']
-            )
-            print(f"✅ Recordatorio eliminado de la base de datos")
-        except Exception as e:
-            print(f"❌ Error al eliminar recordatorio: {e}")
         
         # Limpiar timer de la lista
         if timer_key in self.timers:
             del self.timers[timer_key]
     
-    def _eliminar_recordatorio_pasado(self, recordatorio, fecha):
-        """
-        Elimina recordatorios que ya pasaron su hora
-        
-        Args:
-            recordatorio: Dict con datos del recordatorio
-            fecha: Fecha en formato ISO
-        """
-        try:
-            self.my_db.delete_recordatorio(
-                fecha, 
-                recordatorio['hora'], 
-                recordatorio['nombre']
-            )
-            print(f"🗑️ Recordatorio pasado eliminado: {recordatorio['nombre']} - {recordatorio['hora']}")
-        except Exception as e:
-            print(f"❌ Error al eliminar recordatorio pasado: {e}")
     
     def stop_all_timers(self):
         """
@@ -225,11 +197,6 @@ class Reminder:
 
 # Ejemplo de uso:
 
-# Crear instancia del sistema de recordatorios
-reminder_system = Reminder()
-
-# Iniciar el sistema
-reminder_system.start_daily_reminder_system()
 
 # Para detener todos los timers (opcional)
 # reminder_system.stop_all_timers()
