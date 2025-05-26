@@ -123,6 +123,28 @@ def logout():
     session['user_id'] = None
     return render_template('index.html')
 
+@app.route('/delete_recordatorio_by_id', methods=['DELETE'])
+def delete_rec_by_id():
+    try:
+        data = request.get_json()
+        print(f"[Flask] Solicitud DELETE recibida con datos: {data}")
+
+        if not data or 'id' not in data:
+            print("[Flask] Error: No se proporcionó un ID.")
+            return jsonify({'status': 'error', 'message': 'ID faltante'}), 400
+
+        id = data['id']
+        print(f"[Flask] Procediendo a eliminar el recordatorio con ID: {id}")
+        my_db.delete_recordatorio_by_id(id)
+
+        print(f"[Flask] Recordatorio con ID {id} eliminado correctamente.")
+        return jsonify({'status': 'ok'}), 200
+
+    except Exception as e:
+        print(f"[Flask] Excepción al eliminar recordatorio: {e}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':

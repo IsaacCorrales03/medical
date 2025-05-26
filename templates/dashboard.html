@@ -305,19 +305,20 @@
                 
                 // Manejar el formato de tuplas: [('2025-05-26', '13:00', 'chambas'), ...]
                 if (Array.isArray(recordatoriosData)) {
+                    console.log(recordatoriosData)
                     recordatoriosData.forEach((tupla, index) => {
                         // tupla = [fecha, hora, nombre]
                         const fecha = tupla[0];  // '2025-05-26'
                         const hora = tupla[1];   // '13:00'
                         const nombre = tupla[2]; // 'chambas'
-                        
+                        const id = tupla[3]
                         // Organizar medicamentos por fecha
                         if (!this.medications[fecha]) {
                             this.medications[fecha] = [];
                         }
                         
                         this.medications[fecha].push({
-                            id: index + 1, // Usar índice como ID temporal
+                            id: id, // Usar índice como ID temporal
                             nombre: nombre,
                             hora: hora
                         });
@@ -452,6 +453,7 @@
             medicationsList.innerHTML = '<p class="text-gray-500 text-sm">No hay medicamentos programados para este día.</p>';
         } else {
             medications.forEach((med) => {
+                console.log(med)
                 const medElement = document.createElement('div');
                 medElement.className = 'medication-item flex items-center justify-between p-3 border rounded-lg';
                 medElement.innerHTML = `
@@ -524,39 +526,34 @@
         }
     }
 
-    async removeMedication(medicationId) {
-        if (!confirm('¿Estás seguro de que quieres eliminar este medicamento?')) {
-            return;
-        }
+   async removeMedication(medicationId) {
 
-        try {
-            const response = await fetch('/delete_recordatorio', {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    id: medicationId
-                })
-            });
+    try {
+        const response = await fetch('/delete_recordatorio_by_id', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: medicationId })
+        });
+        console.log(medicationId)
+        if (!response.ok) throw new Error('Error al eliminar el medicamento');
 
-            if (response.ok) {
-                // RECARGAR TODOS LOS DATOS DEL SERVIDOR
-                await this.loadAllMedications();
-                
-                // Actualizar vista
-                this.loadDayMedications();
-                this.renderCalendar();
-                
-                alert('Medicamento eliminado correctamente.');
-            } else {
-                throw new Error('Error al eliminar el medicamento');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error al eliminar el medicamento. Por favor, inténtalo de nuevo.');
-        }
+        // Carga principal
+        await this.loadAllMedications();
+
+        // Cargas secundarias, optimizadas
+        requestAnimationFrame(() => {
+            this.loadDayMedications();
+            this.renderCalendar();
+        });
+
+        alert('Medicamento eliminado correctamente.');
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al eliminar el medicamento. Por favor, inténtalo de nuevo.');
     }
+}
 
     getDateKey(date) {
         return date.toISOString().split('T')[0];

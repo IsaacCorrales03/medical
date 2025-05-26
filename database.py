@@ -87,12 +87,25 @@ class DataBaseManager:
         
     def get_recordatorio_by_id(self, id_paciente):
         cursor = self._get_cursor()
-        cursor.execute("SELECT dia, hora, nombre FROM Recordatorios WHERE paciente_id = ?", (id_paciente,))
+        cursor.execute("SELECT dia, hora, nombre, id FROM Recordatorios WHERE paciente_id = ?", (id_paciente,))
         return cursor.fetchall()
     def get_recordatorios_por_fecha(self, fecha):
         cursor = self._get_cursor()
         cursor.execute("SELECT hora, nombre, user_email FROM Recordatorios WHERE dia = ?", (fecha,))
         return cursor.fetchall()
+    
+    def delete_recordatorio_by_id(self, id):
+        try:
+            print(f"[DB] Conectando a la base de datos para eliminar ID: {id}")
+            cursor = self._get_cursor()
+            cursor.execute("DELETE FROM Recordatorios WHERE id = ?", (id,))
+            self._get_connection().commit()
+            print(f"[DB] Recordatorio con ID {id} eliminado con éxito.")
+        except Exception as e:
+            print(f"[DB] Error al eliminar recordatorio con ID {id}: {e}")
+            raise
+
+    
     def delete_recordatorio(self, dia, hora, nombre):
         cursor = self._get_cursor()
         cursor.execute("DELETE FROM Recordatorios WHERE dia = ? AND hora = ? AND nombre = ?", (dia, hora, nombre))
