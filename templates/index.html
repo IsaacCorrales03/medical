@@ -17,7 +17,8 @@
                 Busca información precisa y actualizada sobre dosis, efectos secundarios, interacciones y mucho más.
             </p>
             <div class="mt-10 max-w-xl mx-auto">
-                <form class="flex items-center search-animation bg-white rounded-full shadow-xl p-1" action="/medicamentos" method="GET">
+                <form class="flex items-center search-animation bg-white rounded-full shadow-xl p-1"
+                    action="/medicamentos" method="GET">
                     <div class="pl-4 flex items-center pointer-events-none">
                         <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                             fill="currentColor">
@@ -26,10 +27,9 @@
                                 clip-rule="evenodd" />
                         </svg>
                     </div>
-                    <input class="w-full pl-3 pr-10 py-3 rounded-full text-gray-900 focus:outline-none" type="text" name="name" 
-                        placeholder="Buscar medicamento (ej. Paracetamol, Ibuprofeno...)">
-                    <button
-                    type="submit"
+                    <input class="w-full pl-3 pr-10 py-3 rounded-full text-gray-900 focus:outline-none" type="text"
+                        name="name" placeholder="Buscar medicamento (ej. Paracetamol, Ibuprofeno...)">
+                    <button type="submit"
                         class="bg-primary hover:bg-primary-light text-white font-bold py-3 px-6 rounded-full transition duration-150 ease-in-out mr-1">
                         Buscar
                     </button>
@@ -113,80 +113,95 @@
         <h2 class="text-3xl font-bold text-gray-900 text-center mb-10">Explora por categorías</h2>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div
-                class="group bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
-                <div class="bg-secondary-lighter h-2"></div>
+            {% for categoria in categorias %}
+            <div class="group bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl cursor-pointer"
+                 onclick="buscarPorCategoria('{{ categoria }}')">
+                <!-- Barra de color aleatoria -->
+                <div class="h-2 {{ loop.cycle('bg-primary', 'bg-secondary', 'bg-secondary-lighter', 'bg-primary-light') }}"></div>
+                
                 <div class="p-5">
-                    <svg class="h-8 w-8 text-secondary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                    <h3
-                        class="font-semibold text-lg text-gray-900 group-hover:text-secondary transition-colors duration-300">
-                        Cardiovasculares</h3>
-                    <p class="mt-1 text-sm text-gray-500">Antihipertensivos, anticoagulantes, estatinas...</p>
+                    <!-- Ícono dinámico basado en la categoría -->
+                    {% if 'cardiovascular' in categoria.lower() or 'corazón' in categoria.lower() %}
+                        <svg class="h-8 w-8 text-secondary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                    {% elif 'antibiótico' in categoria.lower() or 'infección' in categoria.lower() %}
+                        <svg class="h-8 w-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z" />
+                        </svg>
+                    {% elif 'analgésico' in categoria.lower() or 'dolor' in categoria.lower() %}
+                        <svg class="h-8 w-8 text-secondary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                    {% elif 'nervioso' in categoria.lower() or 'neurológico' in categoria.lower() %}
+                        <svg class="h-8 w-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    {% elif 'digestivo' in categoria.lower() or 'estómago' in categoria.lower() %}
+                        <svg class="h-8 w-8 text-secondary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                        </svg>
+                    {% elif 'respiratorio' in categoria.lower() or 'pulmón' in categoria.lower() %}
+                        <svg class="h-8 w-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    {% elif 'cápsula' in categoria.lower() %}
+                        <svg class="h-8 w-8 text-secondary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                        </svg>
+                    {% elif 'inhalador' in categoria.lower() %}
+                        <svg class="h-8 w-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    {% elif 'inyectable' in categoria.lower() %}
+                        <svg class="h-8 w-8 text-secondary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-10 0a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2M9 12l2 2 4-4" />
+                        </svg>
+                    {% elif 'parche' in categoria.lower() %}
+                        <svg class="h-8 w-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    {% elif 'pastilla' in categoria.lower() %}
+                        <svg class="h-8 w-8 text-secondary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                    {% elif 'sublingual' in categoria.lower() %}
+                        <svg class="h-8 w-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                    {% else %}
+                        <!-- Ícono genérico para medicamentos -->
+                        <svg class="h-8 w-8 {{ loop.cycle('text-primary', 'text-secondary') }} mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                        </svg>
+                    {% endif %}
+                    
+                    <h3 class="font-semibold text-lg text-gray-900 group-hover:{{ loop.cycle('text-primary', 'text-secondary') }} transition-colors duration-300">
+                        {{ categoria }}
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500">Explorar medicamentos de esta categoría</p>
                 </div>
             </div>
-
-            <div
-                class="group bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
-                <div class="bg-primary-light h-2"></div>
-                <div class="p-5">
-                    <svg class="h-8 w-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z" />
-                    </svg>
-                    <h3
-                        class="font-semibold text-lg text-gray-900 group-hover:text-primary transition-colors duration-300">
-                        Antibióticos</h3>
-                    <p class="mt-1 text-sm text-gray-500">Penicilinas, cefalosporinas, quinolonas...</p>
-                </div>
-            </div>
-
-            <div
-                class="group bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
-                <div class="bg-secondary h-2"></div>
-                <div class="p-5">
-                    <svg class="h-8 w-8 text-secondary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                    <h3
-                        class="font-semibold text-lg text-gray-900 group-hover:text-secondary transition-colors duration-300">
-                        Analgésicos</h3>
-                    <p class="mt-1 text-sm text-gray-500">Anti-inflamatorios, opioides, antipiréticos...</p>
-                </div>
-            </div>
-
-            <div
-                class="group bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
-                <div class="bg-primary h-2"></div>
-                <div class="p-5">
-                    <svg class="h-8 w-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    <h3
-                        class="font-semibold text-lg text-gray-900 group-hover:text-primary transition-colors duration-300">
-                        Sistema Nervioso</h3>
-                    <p class="mt-1 text-sm text-gray-500">Antidepresivos, ansiolíticos, antiepilépticos...</p>
-                </div>
-            </div>
+            {% endfor %}
         </div>
 
+        <!-- Mostrar mensaje si no hay categorías -->
+        {% if not categorias %}
+        <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 009.586 13H7" />
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">No hay categorías disponibles</h3>
+            <p class="mt-1 text-sm text-gray-500">Agrega algunos medicamentos para ver las categorías aquí.</p>
+        </div>
+        {% endif %}
+
         <div class="text-center mt-10">
-            <a href="#"
+            <a href="{{ url_for('medicamentos') }}" 
                 class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-secondary hover:bg-secondary-light transition duration-150 ease-in-out">
-                Ver todas las categorías
-                <svg class="ml-2 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                    fill="currentColor">
-                    <path fill-rule="evenodd"
-                        d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                        clip-rule="evenodd" />
+                Ver todos los medicamentos
+                <svg class="ml-2 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
                 </svg>
             </a>
         </div>
@@ -258,7 +273,45 @@
     </svg>
     Ayuda
 </a>
+<div id="helpModal" class="modal flex items-center justify-center" style="display: none;">
+    <div class="modal-content bg-white p-6 max-w-md w-11/12">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold text-primary">Centro de Ayuda</h2>
+            <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="border-t border-gray-200 pt-4">
+            <p class="mb-4">Recibe ayuda llamando al:</p>
+            <a href="tel:+50664715781"
+                class="block text-lg font-semibold text-secondary mb-4 hover:text-primary transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path
+                        d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                </svg>
+                +506 6471 5781
+            </a>
+            <p class="mb-4">o mediante nuestra línea de WhatsApp:</p>
+            <a href="https://wa.me/50664715781" target="_blank"
+                class="flex items-center bg-secondary text-white py-2 px-4 rounded-lg hover:bg-secondary-light transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+                WhatsApp: +506 6471 5781
+            </a>
+        </div>
+    </div>
+</div>
 <script>
+    function buscarPorCategoria(categoria) {
+    // Redirigir a la página de búsqueda con filtro de categoría
+    window.location.href = `/medicamentos?categoria=${encodeURIComponent(categoria)}`;
+}
     // List of medications
     const medications = [
         "Paracetamol",
@@ -276,17 +329,36 @@
     }
 
     // Create and add pills to container
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const pillContainer = document.getElementById('medication-pills');
-        
+
         medications.forEach(medication => {
             const pillButton = document.createElement('button');
             pillButton.className = 'pill';
             pillButton.textContent = medication;
             pillButton.addEventListener('click', () => handlePillClick(medication));
-            
+
             pillContainer.appendChild(pillButton);
         });
+        const helpButton = document.querySelector('.help-button');
+        const modal = document.getElementById('helpModal');
+        const closeModal = document.getElementById('closeModal');
+
+        helpButton.addEventListener('click', function (e) {
+            e.preventDefault();
+            modal.style.display = 'flex';
+        });
+
+        closeModal.addEventListener('click', function () {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function (e) {
+            if (e.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+
     });
 </script>
 {% endblock %}

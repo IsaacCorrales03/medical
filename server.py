@@ -1,14 +1,90 @@
 from flask import * 
 from database import DataBaseManager
+from flask_mail import Message, Mail
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
 app = Flask("__main__")
 app.static_folder = 'static'
 
+# Configuración desde variables de entorno
+app.secret_key = os.getenv('SECRET_KEY')
+
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT')) 
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS') == 'True'
+app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL') == 'True'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+
+mail = Mail(app)
+
+from flask import request, render_template
+from flask_mail import Message
+
+@app.route('/email')
+def enviar_correo():
+    tipo = request.args.get('tipo')  # novedades, suscripcion, medicamento
+    correo_destinatario = request.args.get('correo')
+    if tipo == 'novedades':
+        if not correo_destinatario:
+            return "Falta el parámetro 'correo' para novedades.", 400
+
+        html_content = render_template('correo_novedades.html')
+        asunto = '¡Novedades de Meditime!'
+
+    elif tipo == 'suscripcion':
+        if not correo_destinatario:
+            return "Falta el parámetro 'correo' para aviso de suscripción.", 400
+
+        html_content = render_template('correo_suscripcion.html')
+        asunto = '¡Gracias por suscribirte a Meditime!'
+
+    elif tipo == 'recordatorio':
+        nombre = request.args.get('nombre')
+        hora = request.args.get('hora')
+        user_email = correo_destinatario
+        nombre_usuario = my_db.get_username_by_email(user_email)[0]
+        print(nombre_usuario)
+        
+        # Validar que todos los campos requeridos estén presentes
+        if not nombre:
+            return jsonify({'error': 'El campo nombre es requerido'}), 400
+        
+        if not hora:
+            return jsonify({'error': 'El campo hora es requerido'}), 400
+        
+        if not user_email:
+            return jsonify({'error': 'El campo user_email es requerido'}), 400
+
+        html_content = render_template(
+            'correo_recordatorio.html',
+            hora= hora,
+            nombre_usuario=nombre_usuario,
+            medicamento=nombre
+        )
+        asunto = 'Recordatorio de Medicación'
+    else:
+        return "Tipo de correo no válido. Usa 'novedades', 'suscripcion' o 'medicamento'.", 400
+    
+    # Enviar correo
+    msg = Message(asunto,
+                  sender=app.config['MAIL_USERNAME'],
+                  recipients=[correo_destinatario])
+    msg.html = html_content
+    mail.send(msg)
+
+    return 'Correo enviado correctamente.'
+
+
+
 my_db = DataBaseManager()
-app.secret_key = 'meditime_secret_key_development'
 my_db.create_tables()
 @app.route('/')
 def index():
-    return render_template("index.html")
+    categorias = my_db.get_all_categorias()
+    return render_template("index.html", categorias=categorias)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -140,19 +216,46 @@ def get_medication():
         medicamentos.append(medicamento_dict)
     
     return jsonify(medicamentos)
+
 @app.route('/condiciones')
 def condiciones():
     return render_template('condiciones.html')
 
+@app.route('/.well-known/appspecific/com.chrome.devtools.json')
+def devtools_json():
+    return ('', 200)
+
+@app.route('/add_recordatorio', methods=['POST'])
+def add_recordatorio():
+    data = request.get_json()
+    paciente_id = data.get('paciente_id')
+    dia = data.get('dia')
+    hora = data.get('hora')
+    nombre = data.get('nombre')
+    user_email = data.get('user_email')
+
+    my_db.add_recordatorio(paciente_id=paciente_id,dia=dia, hora=hora, nombre=nombre, user_email=user_email)
+    return {'status': 'Ok'}
+
+@app.route('/get_recordatorios', methods=['POST'])
+def get_recordatios():
+    data = request.get_json()
+    paciente_id = data.get('paciente_id')
+    recordatorios = my_db.get_recordatorio_by_id(paciente_id)
+    return recordatorios
 
 @app.route('/medicamentos', methods=['GET'])
 def medicamentos():
     if request.args:
         name = request.args.get('name')
-        medicamentos = my_db.get_medicamento_by_name(name)
+        categoria = request.args.get('categoria')
+        if name:
+            medicamentos = my_db.get_medicamento_by_name(name)
+        if categoria:
+            medicamentos = my_db.get_medicamento_by_categoria(categoria)
     else:
         medicamentos = my_db.get_all_medicamentos()
     return render_template('medicamentos.html', medicamentos=medicamentos)
-
-app.run(port=1010, debug=True)
-
+pass
+if __name__ == '__main__':
+    app.run(debug=True, port=1010, )

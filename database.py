@@ -40,30 +40,32 @@ class DataBaseManager:
             Password VARCHAR(255) NOT NULL
 
         );"""
+
         
         medicamentos_table = """CREATE TABLE IF NOT EXISTS Medicamentos(
             Id INTEGER PRIMARY KEY AUTOINCREMENT,
             Nombre VARCHAR(100) NOT NULL,
             Uso TEXT,
             Dosis TEXT,
+            Categoria TEXT,
             Efectos_Secundarios TEXT,
             Recomendaciones_Alimenticias TEXT
         )"""
 
-        medicamentos_usuario_table = """
-            CREATE TABLE IF NOT EXISTS Medicamentos_Usuarios (
+        recordatorios_table = """
+            CREATE TABLE IF NOT EXISTS Recordatorios (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 paciente_id INTEGER NOT NULL,
                 nombre TEXT NOT NULL,
                 dia TEXT NOT NULL,          
-                hora TEXT NOT NULL,        
-                ciclo TEXT NOT NULL,  
+                hora TEXT NOT NULL,       
+                user_email TEXT NOT NULL,  
                 FOREIGN KEY(paciente_id) REFERENCES Usuarios(id)
             );"""
         
         cursor.execute(users_table)
         cursor.execute(medicamentos_table)
-        cursor.execute(medicamentos_usuario_table)
+        cursor.execute(recordatorios_table)
 
         self._get_connection().commit()
         print("Tablas creadas...")
@@ -76,17 +78,44 @@ class DataBaseManager:
         cursor.execute("SELECT * FROM Usuarios WHERE Email=? AND Password=?", (email, password))
         return cursor.fetchone()
     
-    def add_medicamento(self, nombre, uso, dosis, efectos_secundarios, recomendaciones_alimenticias):
+    def add_recordatorio(self, paciente_id, dia, hora, nombre, user_email):
+        cursor = self._get_cursor()
+        cursor.execute("INSERT INTO Recordatorios(paciente_id, nombre, dia,hora, user_email) VALUES (?,?,?,?,?)",
+        (paciente_id, nombre, dia, hora, user_email))
+        self._get_connection().commit()
+        print("Añadido el recordatorio")
+        
+    def get_recordatorio_by_id(self, id_paciente):
+        cursor = self._get_cursor()
+        cursor.execute("SELECT dia, hora, nombre FROM Recordatorios WHERE paciente_id = ?", (id_paciente,))
+        return cursor.fetchall()
+    def get_recordatorios_por_fecha(self, fecha):
+        cursor = self._get_cursor()
+        cursor.execute("SELECT hora, nombre, user_email FROM Recordatorios WHERE dia = ?", (fecha,))
+        return cursor.fetchall()
+    def delete_recordatorio(self, dia, hora, nombre):
+        cursor = self._get_cursor()
+        cursor.execute("DELETE FROM Recordatorios WHERE dia = ? AND hora = ? AND nombre = ?", (dia, hora, nombre))
+        self._get_connection().commit()
+        return True
+    
+    def get_username_by_email(self, email):
+        cursor = self._get_cursor()
+        cursor.execute("SELECT Username FROM Usuarios WHERE Email = ?", (email, ))
+        return cursor.fetchone()
+    
+    def add_medicamento(self, nombre, uso, dosis, categoria, efectos_secundarios, recomendaciones_alimenticias):
         cursor = self._get_cursor()
         cursor.execute("""
             INSERT INTO Medicamentos(
                 Nombre, 
                 Uso, 
                 Dosis, 
+                Categoria, 
                 Efectos_Secundarios, 
                 Recomendaciones_Alimenticias
-            ) VALUES(?, ?, ?, ?, ?)
-        """, (nombre, uso, dosis, efectos_secundarios, recomendaciones_alimenticias))
+            ) VALUES(?, ?, ?, ?, ?, ?)
+        """, (nombre, uso, dosis, categoria, efectos_secundarios, recomendaciones_alimenticias))
         self._get_connection().commit()
         print(f"Medicamento '{nombre}' añadido correctamente...")
     
@@ -94,7 +123,28 @@ class DataBaseManager:
         cursor = self._get_cursor()
         cursor.execute("SELECT * FROM Medicamentos WHERE Nombre LIKE ?", ('%' + nombre + '%',))
         return cursor.fetchall()
-    
+        
+    def get_medicamento_by_categoria(self, categoria):
+        cursor = self._get_cursor()
+        cursor.execute("SELECT * FROM Medicamentos WHERE Categoria LIKE ?", ('%' + categoria + '%',))
+        return cursor.fetchall()
+    def get_all_categorias(self):
+        cursor = self._get_cursor()
+        cursor.execute("""
+            SELECT DISTINCT Categoria 
+            FROM Medicamentos 
+            WHERE Categoria IS NOT NULL 
+            AND Categoria != ''
+            ORDER BY Categoria
+        """)
+        categorias = cursor.fetchall()
+        
+        # Extraer solo los valores de la tupla y filtrar valores vacíos
+        categorias_lista = [categoria[0] for categoria in categorias if categoria[0] and categoria[0].strip()]
+        
+        print(f"Se encontraron {len(categorias_lista)} categorías únicas...")
+        return categorias_lista
+
     def login_user(self, email, password):
         cursor = self._get_cursor()
         cursor.execute("SELECT * FROM Usuarios WHERE Email=? AND Password=?", (email, password))
@@ -106,15 +156,6 @@ class DataBaseManager:
         cursor.execute("SELECT * FROM Medicamentos")
         return cursor.fetchall()
     
-    def update_medicamento(self, id, nombre, uso, dosis, efectos_secundarios, recomendaciones_alimenticias):
-        cursor = self._get_cursor()
-        cursor.execute("""
-            UPDATE Medicamentos 
-            SET Nombre=?, Uso=?, Dosis=?, Efectos_Secundarios=?, Recomendaciones_Alimenticias=?
-            WHERE Id=?
-        """, (nombre, uso, dosis, efectos_secundarios, recomendaciones_alimenticias, id))
-        self._get_connection().commit()
-        print(f"Medicamento ID {id} actualizado correctamente...")
     
     def delete_medicamento(self, id):
         cursor = self._get_cursor()
@@ -149,19 +190,19 @@ class DataBaseManager:
         # Obtener medicamentos asociados
         cursor.execute("""
             SELECT nombre, dia, hora
-            FROM Medicamentos_Usuarios
+            FROM Recordatorios
             WHERE paciente_id=?
         """, (usuario_id,))
         medicamentos = cursor.fetchall()
 
         # Convertir medicamentos a lista de diccionarios
         medicamentos_info = [
-            {"Medicamento": nombre, "Día": dia, "Hora del día": hora}
+            {"Recordatorio": nombre, "Día": dia, "Hora del día": hora}
             for nombre, dia, hora in medicamentos
         ]
 
         # Agregar medicamentos al diccionario del usuario
-        usuario["medicamentos"] = medicamentos_info
+        usuario["recordatorios"] = medicamentos_info
 
         return usuario
 
@@ -175,6 +216,8 @@ class DataBaseManager:
         self._get_connection().commit()
         print(f"Medicamento '{nombre}' asignado al paciente ID {paciente_id}")
         return 1
+        
+
     def get_medicamento_usuario(self, paciente_id):
         cursor = self._get_cursor()
         cursor.execute("SELECT * FROM Medicamentos_Usuarios WHERE paciente_id = ?", (paciente_id,))

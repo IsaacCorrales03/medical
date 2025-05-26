@@ -1,284 +1,234 @@
-document.addEventListener('DOMContentLoaded', function () {
-    console.log('DOM fully loaded');
-    const today = new Date();
-
-    // Formatear y mostrar el mes actual
-    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-    
-    const currentMonthElement = document.getElementById('currentMonth');
-    if (currentMonthElement) {
-        currentMonthElement.textContent = monthNames[today.getMonth()] + ' ' + today.getFullYear();
-    } else {
-        console.error('Element with ID "currentMonth" not found');
-    }
-
-    // Verificamos si el elemento calendarDays existe
-    if (!document.getElementById('calendarDays')) {
-        console.error('Element with ID "calendarDays" not found');
-        return;
-    }
-
-    // Primero obtenemos los medicamentos y luego generamos el calendario
-    console.log('Fetching medications...');
-    fetch('/get_medication')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(medications => {
-            console.log('Medications loaded successfully:', medications);
-            // Generar el calendario con los medicamentos
-            generateCalendarWithMedications(today, medications);
-        })
-        .catch(error => {
-            console.error('Error fetching medications:', error);
-            // Si hay un error, generar el calendario normal
-            generateCalendar(today);
-        });
-});
-
-function generateCalendarWithMedications(date, medications) {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const today = new Date();
-
-    // Obtener el primer día del mes
-    const firstDay = new Date(year, month, 1);
-
-    // Obtener el día de la semana del primer día (0 = Domingo, 1 = Lunes, etc.)
-    let firstDayOfWeek = firstDay.getDay();
-    // Convertir de 0-6 (Dom-Sáb) a 1-7 (Lun-Dom)
-    firstDayOfWeek = firstDayOfWeek === 0 ? 7 : firstDayOfWeek;
-
-    // Obtener el último día del mes
-    const lastDay = new Date(year, month + 1, 0).getDate();
-
-    // Contenedor de días
-    const calendarDays = document.getElementById('calendarDays');
-    calendarDays.innerHTML = '';
-
-    // Añadir celdas vacías para los días antes del primer día del mes
-    for (let i = 1; i < firstDayOfWeek; i++) {
-        const emptyDay = document.createElement('div');
-        emptyDay.className = 'calendar-day empty';
-        calendarDays.appendChild(emptyDay);
-    }
-
-    // Añadir días del mes
-    for (let day = 1; day <= lastDay; day++) {
-        const dayElement = document.createElement('div');
-        dayElement.className = 'calendar-day text-center py-2 text-sm relative cursor-pointer w-full h-12 flex items-center justify-center';
-        dayElement.style.zIndex = -0
-
-        // Comprobar si es el día actual
-        if (today.getDate() === day && today.getMonth() === month && today.getFullYear() === year) {
-            dayElement.classList.add('bg-blue-100', 'rounded');
-        }
-
-        // Fecha actual para comparar con los medicamentos
-        const currentDate = new Date(year, month, day);
-        // Día de la semana (1-7, donde 1 es lunes)
-        const dayOfWeek = currentDate.getDay() === 0 ? 7 : currentDate.getDay();
-
-        // Array para almacenar los medicamentos de este día
-        let dayMedications = [];
-
-        // Comprobar si hay medicamentos para este día
-        medications.forEach(med => {
-            let shouldShow = false;
-
-            // Comprobar según la frecuencia
-            if (med.frecuencia === 'diario') {
-                shouldShow = true;
-            } else if (med.frecuencia === 'semanal') {
-                // Para frecuencia semanal, mostramos todos ya que no tenemos el dia en los datos
-                // Si tuviéramos el día específico, usaríamos: parseInt(med.dia) === dayOfWeek
-                shouldShow = true;
-            } else if (med.frecuencia === 'mensual') {
-                // Para frecuencia mensual, mostramos todos ya que no tenemos el dia en los datos
-                // Si tuviéramos el día específico, usaríamos: parseInt(med.dia) === day
-                shouldShow = true;
-            } else if (med.frecuencia === 'varias_veces') {
-                shouldShow = true;
+        class CalendarApp {
+            constructor() {
+                this.currentDate = new Date();
+                this.selectedDate = null;
+                this.medications = {}; // Almacenará los medicamentos por fecha
+                this.init();
             }
 
-            if (shouldShow) {
-                dayMedications.push(med);
+            init() {
+                this.renderCalendar();
+                this.setupEventListeners();
+                this.loadMedications();
             }
-        });
 
-        // Si hay medicamentos para este día, añadir indicador
-        if (dayMedications.length > 0) {
-            dayElement.classList.add('has-medications');
+            setupEventListeners() {
+                document.getElementById('prevMonth').addEventListener('click', () => {
+                    this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+                    this.renderCalendar();
+                });
 
-            // Añadir punto indicador de medicamento
-            const indicatorElement = document.createElement('div');
-            indicatorElement.className = 'medication-indicator bg-red-500 w-3 h-3 rounded-full absolute bottom-1 left-1/2 transform -translate-x-1/2';
-            dayElement.appendChild(indicatorElement);
-            
-            // Añadir estilo visual para días con medicamentos
-            dayElement.classList.add('border-red-300', 'border');
+                document.getElementById('nextMonth').addEventListener('click', () => {
+                    this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+                    this.renderCalendar();
+                });
 
-            // Crear tooltip para mostrar los medicamentos
-            const tooltipElement = document.createElement('div');
-            tooltipElement.className = 'medication-tooltip hidden absolute z-20 bg-white shadow-lg rounded p-2 text-left w-48 bottom-full left-1/2 transform -translate-x-1/2 mb-2';
-            
-            // Añadir flecha del tooltip
-            const tooltipArrow = document.createElement('div');
-            tooltipArrow.className = 'absolute w-3 h-3 bg-white transform rotate-45 left-1/2 -ml-1.5 -bottom-1.5';
-            tooltipElement.appendChild(tooltipArrow);
+                document.getElementById('closePanelBtn').addEventListener('click', () => {
+                    this.closeDayPanel();
+                });
 
-            // Añadir contenido al tooltip
-            const tooltipContent = document.createElement('div');
-            tooltipContent.className = 'relative z-10';
-            tooltipContent.innerHTML = '<p class="font-bold text-sm mb-1">Medicamentos:</p>';
+                document.getElementById('addMedicationBtn').addEventListener('click', () => {
+                    this.addMedication();
+                });
+            }
 
-            // Añadir cada medicamento al tooltip
-            dayMedications.forEach(med => {
-                tooltipContent.innerHTML += `
-                    <div class="mb-1 pb-1 border-b border-gray-200 last:border-0">
-                        <p class="text-sm font-semibold">${med.nombre}</p>
-                        <p class="text-xs text-gray-600">Dosis: ${med.dosis}</p>
-                        <p class="text-xs text-gray-600">Hora: ${med.hora}</p>
-                    </div>
-                `;
-            });
+            renderCalendar() {
+                const year = this.currentDate.getFullYear();
+                const month = this.currentDate.getMonth();
+                
+                // Actualizar título del mes
+                const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                                  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
 
-            tooltipElement.appendChild(tooltipContent);
-            dayElement.appendChild(tooltipElement);
+                // Obtener primer día del mes y días en el mes
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                
+                const calendarDays = document.getElementById('calendarDays');
+                calendarDays.innerHTML = '';
 
-            // Mostrar/ocultar tooltip al hacer hover
-            dayElement.addEventListener('mouseenter', function () {
-                tooltipElement.classList.remove('hidden');
-            });
-
-            dayElement.addEventListener('mouseleave', function () {
-                tooltipElement.classList.add('hidden');
-            });
-        }
-
-        // Asegurarse de que el número del día sea visible a pesar del indicador
-const dayNumber = document.createElement('span');
-dayNumber.textContent = day;
-dayNumber.className = 'z-10 relative';
-dayElement.appendChild(dayNumber);
-
-calendarDays.appendChild(dayElement);
-    }
-}
-
-function generateCalendar(date) {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const today = new Date();
-
-    // Obtener el primer día del mes
-    const firstDay = new Date(year, month, 1);
-
-    // Obtener el día de la semana del primer día (0 = Domingo, 1 = Lunes, etc.)
-    let firstDayOfWeek = firstDay.getDay();
-    // Convertir de 0-6 (Dom-Sáb) a 1-7 (Lun-Dom)
-    firstDayOfWeek = firstDayOfWeek === 0 ? 7 : firstDayOfWeek;
-
-    // Obtener el último día del mes
-    const lastDay = new Date(year, month + 1, 0).getDate();
-
-    // Contenedor de días
-    const calendarDays = document.getElementById('calendarDays');
-    calendarDays.innerHTML = '';
-
-    // Añadir celdas vacías para los días antes del primer día del mes
-    for (let i = 1; i < firstDayOfWeek; i++) {
-        const emptyDay = document.createElement('div');
-        emptyDay.className = 'calendar-day empty';
-        calendarDays.appendChild(emptyDay);
-    }
-
-    // Añadir días del mes
-    for (let day = 1; day <= lastDay; day++) {
-        const dayElement = document.createElement('div');
-        dayElement.className = 'calendar-day text-center py-2 text-sm ';
-
-        // Comprobar si es el día actual
-        if (today.getDate() === day && today.getMonth() === month && today.getFullYear() === year) {
-            dayElement.classList.add('bg-blue-100', 'rounded');
-        }
-
-        dayElement.textContent = day;
-        calendarDays.appendChild(dayElement);
-    }
-}
-
-// Modal functionality
-const addMedicationBtn = document.getElementById('addMedicationBtn');
-const medicationModal = document.getElementById('medicationModal');
-const closeModalBtn = document.getElementById('closeModalBtn');
-const cicloSelect = document.getElementById('ciclo');
-const diaContainer = document.getElementById('diaContainer');
-
-// Show modal when button is clicked
-if (addMedicationBtn) {
-    addMedicationBtn.addEventListener('click', function () {
-        medicationModal.classList.remove('hidden');
-    });
-}
-
-// Hide modal when close button is clicked
-if (closeModalBtn) {
-    closeModalBtn.addEventListener('click', function () {
-        medicationModal.classList.add('hidden');
-    });
-}
-
-// Hide modal when clicking outside
-if (medicationModal) {
-    medicationModal.addEventListener('click', function (e) {
-        if (e.target === medicationModal) {
-            medicationModal.classList.add('hidden');
-        }
-    });
-}
-
-// Show/hide day selector based on cycle type
-if (cicloSelect) {
-    cicloSelect.addEventListener('change', function () {
-        if (this.value === 'semanal') {
-            diaContainer.classList.remove('hidden');
-        } else {
-            diaContainer.classList.add('hidden');
-        }
-    });
-}
-
-// Form submission (using fetch API)
-const medicationForm = document.getElementById('medicationForm');
-if (medicationForm) {
-    medicationForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-
-        fetch('/add_medication', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Medicamento añadido correctamente');
-                    medicationModal.classList.add('hidden');
-                    // Reload the page or update the calendar
-                    location.reload();
-                } else {
-                    alert('Error al añadir el medicamento: ' + (data.message || 'Error desconocido'));
+                // Días vacíos al inicio
+                for (let i = 0; i < firstDay; i++) {
+                    const emptyDay = document.createElement('div');
+                    emptyDay.className = 'calendar-day empty';
+                    calendarDays.appendChild(emptyDay);
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al procesar la solicitud');
-            });
-    });
-}
+
+                // Días del mes
+                const today = new Date();
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day';
+                    dayElement.textContent = day;
+                    
+                    // Marcar día actual
+                    if (year === today.getFullYear() && 
+                        month === today.getMonth() && 
+                        day === today.getDate()) {
+                        dayElement.classList.add('current-day');
+                    }
+
+                    // Agregar evento click
+                    dayElement.addEventListener('click', () => {
+                        this.selectDay(year, month, day);
+                    });
+
+                    calendarDays.appendChild(dayElement);
+                }
+            }
+
+            selectDay(year, month, day) {
+                // Remover selección anterior
+                document.querySelectorAll('.selected-day').forEach(el => {
+                    el.classList.remove('selected-day');
+                });
+
+                // Marcar día seleccionado
+                event.target.classList.add('selected-day');
+                
+                this.selectedDate = new Date(year, month, day);
+                this.showDayPanel();
+            }
+
+            showDayPanel() {
+                const panel = document.getElementById('dayPanel');
+                const title = document.getElementById('selectedDayTitle');
+                
+                const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+                const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                                  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                
+                const dayName = dayNames[this.selectedDate.getDay()];
+                const day = this.selectedDate.getDate();
+                const monthName = monthNames[this.selectedDate.getMonth()];
+                
+                title.textContent = `${dayName} ${day} de ${monthName}`;
+                
+                this.loadDayMedications();
+                panel.classList.add('show');
+            }
+
+            closeDayPanel() {
+                const panel = document.getElementById('dayPanel');
+                panel.classList.remove('show');
+                
+                // Remover selección
+                document.querySelectorAll('.selected-day').forEach(el => {
+                    el.classList.remove('selected-day');
+                });
+                
+                this.selectedDate = null;
+            }
+
+            loadDayMedications() {
+                const dateKey = this.getDateKey(this.selectedDate);
+                const medications = this.medications[dateKey] || [];
+                
+                const medicationsList = document.getElementById('medicationsList');
+                medicationsList.innerHTML = '';
+                
+                if (medications.length === 0) {
+                    medicationsList.innerHTML = '<p class="text-gray-500 text-sm">No hay medicamentos programados para este día.</p>';
+                } else {
+                    medications.forEach((med, index) => {
+                        const medElement = document.createElement('div');
+                        medElement.className = 'medication-item flex items-center justify-between p-3 border rounded-lg';
+                        medElement.innerHTML = `
+                            <div>
+                                <div class="font-medium text-gray-800">${med.nombre}</div>
+                                <div class="text-sm text-gray-500">${med.hora}</div>
+                            </div>
+                            <button onclick="calendar.removeMedication('${dateKey}', ${index})" 
+                                    class="text-red-500 hover:text-red-700 p-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        `;
+                        medicationsList.appendChild(medElement);
+                    });
+                }
+            }
+
+            async addMedication() {
+                const nameInput = document.getElementById('medicationName');
+                const timeInput = document.getElementById('medicationTime');
+                
+                const nombre = nameInput.value.trim();
+                const hora = timeInput.value;
+                
+                if (!nombre || !hora) {
+                    alert('Por favor, completa todos los campos.');
+                    return;
+                }
+                
+                const fecha = this.getDateKey(this.selectedDate);
+                
+                try {
+                    const response = await fetch('/add_recordatorio', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            fecha: fecha,
+                            hora: hora,
+                            nombre: nombre
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        // Agregar a la lista local
+                        if (!this.medications[fecha]) {
+                            this.medications[fecha] = [];
+                        }
+                        
+                        this.medications[fecha].push({
+                            nombre: nombre,
+                            hora: hora
+                        });
+                        
+                        // Limpiar formulario
+                        nameInput.value = '';
+                        timeInput.value = '';
+                        
+                        // Actualizar vista
+                        this.loadDayMedications();
+                        
+                        alert('Medicamento agregado correctamente.');
+                    } else {
+                        throw new Error('Error al agregar el medicamento');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al agregar el medicamento. Por favor, inténtalo de nuevo.');
+                }
+            }
+
+            removeMedication(dateKey, index) {
+                if (this.medications[dateKey]) {
+                    this.medications[dateKey].splice(index, 1);
+                    this.loadDayMedications();
+                }
+            }
+
+            getDateKey(date) {
+                return date.toISOString().split('T')[0];
+            }
+
+            loadMedications() {
+                // Aquí puedes cargar los medicamentos existentes desde el servidor
+                // Por ahora, algunos datos de ejemplo:
+                const today = new Date();
+                const todayKey = this.getDateKey(today);
+                
+                this.medications[todayKey] = [
+                    { nombre: 'Paracetamol', hora: '08:00' },
+                    { nombre: 'Ibuprofeno', hora: '14:00' }
+                ];
+            }
+        }
+
+        // Inicializar la aplicación
+        const calendar = new CalendarApp();
