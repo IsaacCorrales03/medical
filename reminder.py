@@ -3,8 +3,7 @@ import time
 from datetime import datetime, timedelta
 from collections import defaultdict
 from database import DataBaseManager
-from dotenv import load_dotenv
-
+import requests
 
 class Reminder:
     def __init__(self):
@@ -15,6 +14,7 @@ class Reminder:
             database_manager: Instancia de DataBaseManager
         """
         self.my_db = DataBaseManager()
+        self.service_url = "http://127.0.0.1:1010/email?"
         self.timers = {} 
         self.running = True
         
@@ -150,13 +150,8 @@ class Reminder:
             fecha: Fecha en formato ISO
             timer_key: Clave del timer para limpieza
         """
-        print(f"\n🔔 ¡RECORDATORIO ACTIVADO! 🔔")
-        print(f"Recordatorio: {recordatorio['nombre']}")
-        print(f"Hora: {recordatorio['hora']}")
-        print(f"Fecha: {fecha}")
-        print(f"Usuario: {recordatorio['user_email']}")
-        print(f"Hora actual: {datetime.now().strftime('%H:%M:%S')}")
-        
+        requests.get(f'{self.service_url}tipo=recordatorio&nombre={recordatorio['nombre']}&hora={recordatorio['hora']}&correo={recordatorio['user_email']}')
+
         # Eliminar recordatorio de la base de datos
         try:
             self.my_db.delete_recordatorio(
