@@ -271,7 +271,7 @@ def login():
 @app.route('/logout')
 def logout():
     session['user_id'] = None
-    return url_for('index')
+    return render_template('index')
 
 @app.route('/delete_recordatorio_by_id', methods=['DELETE'])
 def delete_rec_by_id():
