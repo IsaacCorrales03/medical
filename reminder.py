@@ -14,7 +14,7 @@ class Reminder:
             database_manager: Instancia de DataBaseManager
         """
         self.my_db = DataBaseManager()
-        self.service_url = "http://127.0.0.1:1010/email?"
+        self.service_url = "https://medical-zuhb.onrender.com?email"
         self.timers = {} 
         self.running = True
         
