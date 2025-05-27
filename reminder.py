@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 from database import DataBaseManager
 import requests
+from zoneinfo import ZoneInfo
 
 class Reminder:
     def __init__(self):
@@ -95,32 +96,40 @@ class Reminder:
     def _crear_temporizador_recordatorio(self, recordatorio, fecha):
         """
         Crea un temporizador para un recordatorio específico
-        
+
         Args:
             recordatorio: Dict con datos del recordatorio
-            fecha: Fecha en formato ISO
+            fecha: Fecha en formato ISO (YYYY-MM-DD)
         """
-        now = datetime.now()
-        hora_recordatorio = recordatorio['hora']
-        
+
+        zona = ZoneInfo("America/Costa_Rica")
+        now = datetime.now(zona)
+        print("Son actualmente las:", now.strftime("%Y-%m-%d %H:%M:%S"))
+
+        hora_recordatorio = recordatorio['hora']  # Ej: "15:30"
+
         try:
-            # Crear datetime completo para el recordatorio
-            fecha_hora_recordatorio = datetime.strptime(
-                f"{fecha} {hora_recordatorio}", 
-                '%Y-%m-%d %H:%M'
+            # Parsear hora del recordatorio
+            hora = datetime.strptime(hora_recordatorio, "%H:%M").time()
+
+            # Combinar fecha y hora, y asignar zona horaria correctamente
+            fecha_hora_recordatorio = datetime.combine(
+                datetime.strptime(fecha, "%Y-%m-%d").date(),
+                hora,
+                tzinfo=zona
             )
-            
+
             # Calcular tiempo restante
             tiempo_restante = fecha_hora_recordatorio - now
-            
+
             # Solo crear timer si el recordatorio es en el futuro
             if tiempo_restante.total_seconds() > 0:
                 segundos_restante = tiempo_restante.total_seconds()
                 minutos_restante = int(segundos_restante / 60)
-                
+
                 print(f"Creando temporizador para '{recordatorio['nombre']}' a las {hora_recordatorio}")
                 print(f"Tiempo restante: {minutos_restante} minutos")
-                
+
                 # Crear timer
                 timer_key = f"{fecha}_{hora_recordatorio}_{recordatorio['nombre']}"
                 timer = threading.Timer(
@@ -128,18 +137,16 @@ class Reminder:
                     self._ejecutar_recordatorio,
                     args=(recordatorio, fecha, timer_key)
                 )
-                
+
                 # Guardar referencia del timer
                 self.timers[timer_key] = timer
                 timer.start()
-                
             else:
                 print(f"Recordatorio '{recordatorio['nombre']}' a las {hora_recordatorio} ya pasó")
 
-                
         except ValueError as e:
             print(f"Error al procesar tiempo del recordatorio: {e}")
-    
+            
     def _ejecutar_recordatorio(self, recordatorio, fecha, timer_key):
         """
         Ejecuta el recordatorio cuando el timer se activa

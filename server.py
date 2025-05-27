@@ -4,7 +4,12 @@ from flask_mail import Message, Mail
 from dotenv import load_dotenv
 from reminder import Reminder
 import os
+import random
+import string
+
 load_dotenv()
+
+verification_codes = {}
 
 app = Flask("__main__")
 reminder_system = Reminder()
@@ -23,13 +28,14 @@ app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 
 mail = Mail(app)
 
-from flask import request, render_template
-from flask_mail import Message
+
 url_service = ''
+
 @app.route('/email')
 def enviar_correo():
-    tipo = request.args.get('tipo')  # novedades, suscripcion, medicamento
+    tipo = request.args.get('tipo')  # novedades, suscripcion, medicamento, password_code
     correo_destinatario = request.args.get('correo')
+    
     if tipo == 'novedades':
         if not correo_destinatario:
             return "Falta el parámetro 'correo' para novedades.", 400
@@ -63,14 +69,30 @@ def enviar_correo():
 
         html_content = render_template(
             'correo_recordatorio.html',
-            hora= hora,
+            hora=hora,
             nombre_usuario=nombre_usuario,
             medicamento=nombre,
             url_service=url_service
         )
         asunto = 'Recordatorio de Medicación'
+    
+    elif tipo == 'password_code':
+        codigo = request.args.get('codigo')
+        
+        if not correo_destinatario:
+            return "Falta el parámetro 'correo' para código de verificación.", 400
+        
+        if not codigo:
+            return "Falta el parámetro 'codigo' para código de verificación.", 400
+
+        html_content = render_template(
+            'correo_password_code.html',
+            codigo=codigo
+        )
+        asunto = 'Código de Verificación - Meditime'
+    
     else:
-        return "Tipo de correo no válido. Usa 'novedades', 'suscripcion' o 'medicamento'.", 400
+        return "Tipo de correo no válido. Usa 'novedades', 'suscripcion', 'recordatorio' o 'password_code'.", 400
     
     # Enviar correo
     msg = Message(asunto,
@@ -79,16 +101,139 @@ def enviar_correo():
     msg.html = html_content
     mail.send(msg)
 
-    return 'Correo enviado correctamente.'
-
-
-
+    return 200
 my_db = DataBaseManager()
 my_db.create_tables()
 @app.route('/')
 def index():
     categorias = my_db.get_all_categorias()
     return render_template("index.html", categorias=categorias)
+
+
+import random
+import string
+from flask import request, render_template, redirect, url_for, flash, session
+
+# Diccionario temporal para almacenar códigos de verificación
+verification_codes = {}
+
+def generate_verification_code():
+    """Genera un código de verificación de 6 dígitos"""
+    return ''.join(random.choices(string.digits, k=6))
+
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'GET':
+        return render_template('forgot_password.html')
+    
+    elif request.method == 'POST':
+        email = request.form.get('email')
+        
+        if not email:
+            flash('El campo email es requerido', 'error')
+            return render_template('forgot_password.html')
+        
+        # Verificar si el email está registrado
+        user = my_db.get_user_by_email(email)
+        if not user:
+            flash('No existe una cuenta asociada a este email', 'error')
+            return render_template('forgot_password.html')
+        
+        # Generar código de verificación
+        verification_code = generate_verification_code()
+        verification_codes[email] = verification_code
+        
+        # Enviar correo con código de verificación
+        try:
+            html_content = render_template(
+                'correo_password_code.html',
+                codigo=verification_code,
+                email=email
+            )
+            
+            msg = Message('Código de Verificación - Meditime',
+                          sender=app.config['MAIL_USERNAME'],
+                          recipients=[email])
+            msg.html = html_content
+            mail.send(msg)
+            
+            # Guardar email en sesión para el siguiente paso
+            session['reset_email'] = email
+            flash('Se ha enviado un código de verificación a tu email', 'success')
+            return redirect(url_for('verify_reset_code'))
+            
+        except Exception as e:
+            flash('Error al enviar el correo. Inténtalo de nuevo.', 'error')
+            return render_template('forgot_password.html')
+
+@app.route('/verify_reset_code', methods=['GET', 'POST'])
+def verify_reset_code():
+    if 'reset_email' not in session:
+        flash('Sesión expirada. Inicia el proceso nuevamente.', 'error')
+        return redirect(url_for('forgot_password'))
+    
+    if request.method == 'GET':
+        return render_template('verify_reset_code.html')
+    
+    elif request.method == 'POST':
+        email = session.get('reset_email')
+        entered_code = request.form.get('verification_code')
+        
+        if not entered_code:
+            flash('Ingresa el código de verificación', 'error')
+            return render_template('verify_reset_code.html')
+        
+        # Verificar código
+        if email not in verification_codes or verification_codes[email] != entered_code:
+            flash('Código de verificación incorrecto', 'error')
+            return render_template('verify_reset_code.html')
+        
+        # Código correcto, proceder al cambio de contraseña
+        session['code_verified'] = True
+        return redirect(url_for('change_password'))
+
+@app.route('/change_password', methods=['GET', 'POST'])
+def change_password():
+    if 'reset_email' not in session or not session.get('code_verified'):
+        flash('Acceso no autorizado. Inicia el proceso nuevamente.', 'error')
+        return redirect(url_for('forgot_password'))
+    
+    if request.method == 'GET':
+        return render_template('change_password.html')
+    
+    elif request.method == 'POST':
+        email = session.get('reset_email')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+        
+        if not new_password or not confirm_password:
+            flash('Todos los campos son requeridos', 'error')
+            return render_template('change_password.html')
+        
+        if new_password != confirm_password:
+            flash('Las contraseñas no coinciden', 'error')
+            return render_template('change_password.html')
+        
+        if len(new_password) < 6:
+            flash('La contraseña debe tener al menos 6 caracteres', 'error')
+            return render_template('change_password.html')
+        
+        try:
+            # Cambiar contraseña en la base de datos
+            print(email)
+            my_db.change_password(email, new_password)
+            
+            # Limpiar datos de sesión y códigos de verificación
+            verification_codes.pop(email, None)
+            session.pop('reset_email', None)
+            session.pop('code_verified', None)
+            
+            flash('Contraseña cambiada exitosamente', 'success')
+            return redirect(url_for('login'))
+            
+        except Exception as e:
+            flash('Error al cambiar la contraseña. Inténtalo de nuevo.', 'error')
+            return render_template('change_password.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

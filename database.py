@@ -77,7 +77,14 @@ class DataBaseManager:
         self._get_connection().commit()
         cursor.execute("SELECT * FROM Usuarios WHERE Email=? AND Password=?", (email, password))
         return cursor.fetchone()
-    
+
+    def change_password(self, email, new_password):
+        cursor = self._get_cursor()
+        cursor.execute("UPDATE usuarios SET password = ? WHERE email = ?", (new_password, email))
+        self._get_connection().commit()
+        print(new_password)
+        cursor.close()
+
     def add_recordatorio(self, paciente_id, dia, hora, nombre, user_email):
         cursor = self._get_cursor()
         cursor.execute("INSERT INTO Recordatorios(paciente_id, nombre, dia,hora, user_email) VALUES (?,?,?,?,?)",
@@ -116,6 +123,10 @@ class DataBaseManager:
     def get_username_by_email(self, email):
         cursor = self._get_cursor()
         cursor.execute("SELECT Username FROM Usuarios WHERE Email = ?", (email, ))
+        return cursor.fetchone()
+    def get_user_by_email(self, email):
+        cursor = self._get_cursor()
+        cursor.execute("SELECT * FROM Usuarios WHERE Email = ?", (email, ))
         return cursor.fetchone()
     
     def add_medicamento(self, nombre, uso, dosis, categoria, efectos_secundarios, recomendaciones_alimenticias):
