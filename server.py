@@ -299,4 +299,4 @@ def medicamentos():
 if __name__ == '__main__':
 
     reminder_system.start_daily_reminder_system()
-    app.run(debug=True, port=1010)
+    app.run(host='0.0.0.0',debug=True, port=1010)
