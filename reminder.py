@@ -17,13 +17,14 @@ class Reminder:
         self.my_db = DataBaseManager()
         self.service_url = "https://medical-zuhb.onrender.com?email"
         self.timers = {} 
+        self.zona = ZoneInfo("America/Costa_Rica")
         self.running = True
         
     def start_daily_reminder_system(self):
         """
         Inicia el sistema de recordatorios para el día actual
         """
-        today = datetime.now().strftime('%Y-%m-%d')
+        today = datetime.now(self.zona).strftime('%Y-%m-%d')
         print(f"Iniciando sistema de recordatorios para: {today}")
         
         # Obtener todos los recordatorios del día
@@ -102,8 +103,7 @@ class Reminder:
             fecha: Fecha en formato ISO (YYYY-MM-DD)
         """
 
-        zona = ZoneInfo("America/Costa_Rica")
-        now = datetime.now(zona)
+        now = datetime.now(self.zona)
         print("Son actualmente las:", now.strftime("%Y-%m-%d %H:%M:%S"))
 
         hora_recordatorio = recordatorio['hora']  # Ej: "15:30"
@@ -116,7 +116,7 @@ class Reminder:
             fecha_hora_recordatorio = datetime.combine(
                 datetime.strptime(fecha, "%Y-%m-%d").date(),
                 hora,
-                tzinfo=zona
+                tzinfo=self.zona
             )
 
             # Calcular tiempo restante
@@ -146,7 +146,7 @@ class Reminder:
 
         except ValueError as e:
             print(f"Error al procesar tiempo del recordatorio: {e}")
-            
+
     def _ejecutar_recordatorio(self, recordatorio, fecha, timer_key):
         """
         Ejecuta el recordatorio cuando el timer se activa
