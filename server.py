@@ -101,7 +101,8 @@ def enviar_correo():
     msg.html = html_content
     mail.send(msg)
 
-    return 200
+    return {"Success": True}
+
 my_db = DataBaseManager()
 my_db.create_tables()
 @app.route('/')
