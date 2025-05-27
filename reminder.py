@@ -15,7 +15,7 @@ class Reminder:
             database_manager: Instancia de DataBaseManager
         """
         self.my_db = DataBaseManager()
-        self.service_url = "https://medical-zuhb.onrender.com?email"
+        self.service_url = "https://medical-zuhb.onrender.com/email?"
         self.timers = {} 
         self.zona = ZoneInfo("America/Costa_Rica")
         self.running = True
