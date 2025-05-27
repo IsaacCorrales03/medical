@@ -1,51 +1,171 @@
-<!-- templates/correo.html -->
+<!-- Plantilla de Email de Recordatorio de Medicación -->
+<!-- Detecta automáticamente la hora y aplica el estilo correspondiente -->
+
+{% set hora_numero = hora.split(':')[0]|int %}
+
+{% if hora_numero >= 6 and hora_numero < 12 %}
+<!-- PLANTILLA MAÑANA (6:00 - 11:59) -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Recordatorio de Medicación</title>
 </head>
-<body style="margin: 0; padding: 0;">
-<div
-    style="font-family: Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+<body style="margin: 0; padding: 0; background-color: #fef7e6;">
+<div style="font-family: Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
     <div style="border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
-        <div style="background-color: #d53d70; color: white; padding: 20px; text-align: center;">
-            <img src="https://raw.githubusercontent.com/IsaacCorrales03/imgs_store/refs/heads/main/meditime/logo.png" alt="Meditime Logo"
-                style="max-width: 150px; margin-bottom: 10px;" />
-            <h1 style="margin: 0; font-size: 24px;">Recordatorio de Medicación</h1>
-        </div>
-
-        <div style="background-color: white; padding: 30px 25px;">
-            <p>Hola <strong>{{ nombre_usuario }}</strong>,</p>
-            <p>Ya son las {{ hora }}</p>
-            <p>Te llamamos desde <strong>Meditime</strong> para darte el recordatorio de tomar tu medicamento:</p>
-
-            <div
-                style="background-color: #93efe4; border-left: 5px solid #4dbdc1; padding: 15px; margin: 20px 0; border-radius: 4px;">
-                <p>Es hora de tomar: <span
-                        style="color: #d53d70; font-weight: bold; font-size: 18px;">{{ medicamento }}</span></p>
-            </div>
-
-            <p>Recuerda que mantener la regularidad en tus tratamientos es clave para tu bienestar.</p>
-
-            <p>Si ya has tomado tu medicamento, verficalo.</p>
-             <!-- Estilo con borde -->
-            <p><a href="" style="display: inline-block; padding: 10px 20px; border: 2px solid #28a745; color: #28a745; text-decoration: none; border-radius: 25px; font-weight: 500; transition: all 0.3s ease;" onmouseover="this.style.background='#28a745'; this.style.color='white'" onmouseout="this.style.background='transparent'; this.style.color='#28a745'">verificar</a></p>
         
-
-            <div style="margin-top: 20px; text-align: center;">
-                <p>Síguenos en nuestras redes sociales:</p>
-                <a href="#" style="margin: 0 10px; color: #d53d70; text-decoration: none;">Facebook</a> |
-                <a href="#" style="margin: 0 10px; color: #d53d70; text-decoration: none;">Twitter</a> |
-                <a href="#" style="margin: 0 10px; color: #d53d70; text-decoration: none;">Instagram</a>
+        <!-- Header estilo mañanero -->
+        <div style="background: linear-gradient(135deg, #ffeaa7, #fab1a0); color: #2d3436; padding: 20px; text-align: center;">
+            <img src="https://raw.githubusercontent.com/IsaacCorrales03/imgs_store/refs/heads/main/meditime/logo.png" alt="Meditime Logo"
+                style="max-width: 150px; margin-bottom: 10px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));" />
+            <h1 style="margin: 0; font-size: 24px; color: #2d3436;">
+                ☀️ Recordatorio de Medicación
+            </h1>
+        </div>
+        <div style="background-color: white; padding: 30px 25px;">
+            <p>Buenos días <strong>{{ nombre_usuario }}</strong>,</p>
+            <p>Ya son las <strong>{{ hora }}</strong> ☀️</p>
+            <p>Te llamamos desde <strong>Meditime</strong> para darte el recordatorio de tomar tu medicamento y comenzar bien tu día:</p>
+            <!-- Caja destacada estilo mañanero -->
+            <div style="background-color: #fff9e6; border-left: 5px solid #fdcb6e; padding: 15px; margin: 20px 0; border-radius: 4px; box-shadow: 0 2px 4px rgba(253, 203, 110, 0.2);">
+                <p>Es hora de tomar: <span style="color: #e17055; font-weight: bold; font-size: 18px;">{{ medicamento }}</span></p>
+            </div>
+            <p>🌱 Empezar el día con tus medicamentos es el primer paso hacia un día saludable y productivo.</p>
+            <p>Si ya has tomado tu medicamento, veríficalo para llevar un control adecuado.</p>
+            
+            <!-- Botón estilo mañanero -->
+            <p>
+                <a href="" style="display: inline-block; padding: 12px 25px; border: 2px solid #e17055; color: #e17055; text-decoration: none; border-radius: 25px; font-weight: 500; transition: all 0.3s ease; background-color: transparent;" 
+                   onmouseover="this.style.background='#e17055'; this.style.color='white'" 
+                   onmouseout="this.style.background='transparent'; this.style.color='#e17055'">
+                   ✓ Verificar medicamento
+                </a>
+            </p>
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #f0f0f0; text-align: center;">
+                <p style="color: #666; margin-bottom: 10px;">¡Que tengas un excelente día! Síguenos en:</p>
+                <a href="#" style="margin: 0 10px; color: #e17055; text-decoration: none; font-weight: 500;">Facebook</a> |
+                <a href="#" style="margin: 0 10px; color: #e17055; text-decoration: none; font-weight: 500;">Twitter</a> |
+                <a href="#" style="margin: 0 10px; color: #e17055; text-decoration: none; font-weight: 500;">Instagram</a>
             </div>
         </div>
-
-        <div style="background-color: #f7f7f7; padding: 15px; text-align: center; font-size: 12px; color: #666;">
-            <p>&copy; 2025 Meditime. Todos los derechos reservados.</p>
-            <p>Si tienes alguna pregunta, contáctanos en: soporte@meditime.com</p>
+        <div style="background: linear-gradient(135deg, #ffeaa7, #fab1a0); padding: 15px; text-align: center; font-size: 12px; color: #2d3436;">
+            <p style="margin: 5px 0; font-weight: 500;">&copy; 2025 Meditime. Todos los derechos reservados.</p>
+            <p style="margin: 5px 0;">Si tienes alguna pregunta, contáctanos en: <a href="mailto:soporte@meditime.com" style="color: #2d3436; font-weight: bold;">soporte@meditime.com</a></p>
         </div>
     </div>
 </div>
 </body>
 </html>
+
+{% elif hora_numero >= 12 and hora_numero < 18 %}
+<!-- PLANTILLA TARDE (12:00 - 17:59) -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Recordatorio de Medicación</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #e8f4fd;">
+<div style="font-family: Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+        
+        <!-- Header estilo vespertino -->
+        <div style="background: linear-gradient(135deg, #74b9ff, #0984e3); color: white; padding: 20px; text-align: center;">
+            <img src="https://raw.githubusercontent.com/IsaacCorrales03/imgs_store/refs/heads/main/meditime/logo.png" alt="Meditime Logo"
+                style="max-width: 150px; margin-bottom: 10px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));" />
+            <h1 style="margin: 0; font-size: 24px; color: white;">
+                🌤️ Recordatorio de Medicación
+            </h1>
+        </div>
+        <div style="background-color: white; padding: 30px 25px;">
+            <p>Buenas tardes <strong>{{ nombre_usuario }}</strong>,</p>
+            <p>Ya son las <strong>{{ hora }}</strong> 🌤️</p>
+            <p>Te llamamos desde <strong>Meditime</strong> para recordarte tu medicamento de la tarde:</p>
+            <!-- Caja destacada estilo vespertino -->
+            <div style="background-color: #e3f2fd; border-left: 5px solid #42a5f5; padding: 15px; margin: 20px 0; border-radius: 4px; box-shadow: 0 2px 4px rgba(66, 165, 245, 0.2);">
+                <p>Es hora de tomar: <span style="color: #0984e3; font-weight: bold; font-size: 18px;">{{ medicamento }}</span></p>
+            </div>
+            <p>💼 Mantener tu rutina de medicamentos durante el día es fundamental para tu bienestar continuo.</p>
+            <p>Si ya has tomado tu medicamento, veríficalo para mantener tu registro actualizado.</p>
+            
+            <!-- Botón estilo vespertino -->
+            <p>
+                <a href="" style="display: inline-block; padding: 12px 25px; border: 2px solid #1976d2; color: #1976d2; text-decoration: none; border-radius: 25px; font-weight: 500; transition: all 0.3s ease; background-color: transparent;" 
+                   onmouseover="this.style.background='#1976d2'; this.style.color='white'" 
+                   onmouseout="this.style.background='transparent'; this.style.color='#1976d2'">
+                   ✓ Verificar medicamento
+                </a>
+            </p>
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e3f2fd; text-align: center;">
+                <p style="color: #666; margin-bottom: 10px;">Continúa cuidándote. Síguenos en:</p>
+                <a href="#" style="margin: 0 10px; color: #0984e3; text-decoration: none; font-weight: 500;">Facebook</a> |
+                <a href="#" style="margin: 0 10px; color: #0984e3; text-decoration: none; font-weight: 500;">Twitter</a> |
+                <a href="#" style="margin: 0 10px; color: #0984e3; text-decoration: none; font-weight: 500;">Instagram</a>
+            </div>
+        </div>
+        <div style="background: linear-gradient(135deg, #74b9ff, #0984e3); padding: 15px; text-align: center; font-size: 12px; color: white;">
+            <p style="margin: 5px 0; font-weight: 500;">&copy; 2025 Meditime. Todos los derechos reservados.</p>
+            <p style="margin: 5px 0;">Si tienes alguna pregunta, contáctanos en: <a href="mailto:soporte@meditime.com" style="color: white; font-weight: bold;">soporte@meditime.com</a></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+{% else %}
+<!-- PLANTILLA NOCHE (18:00 - 05:59) -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Recordatorio de Medicación</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f3e5f5;">
+<div style="font-family: Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);">
+        
+        <!-- Header estilo nocturno -->
+        <div style="background: linear-gradient(135deg, #6c5ce7, #2d3436); color: white; padding: 20px; text-align: center;">
+            <img src="https://raw.githubusercontent.com/IsaacCorrales03/imgs_store/refs/heads/main/meditime/logo.png" alt="Meditime Logo"
+                style="max-width: 150px; margin-bottom: 10px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));" />
+            <h1 style="margin: 0; font-size: 24px; color: white;">
+                🌙 Recordatorio de Medicación
+            </h1>
+        </div>
+        <div style="background-color: white; padding: 30px 25px;">
+            <p>Buenas noches <strong>{{ nombre_usuario }}</strong>,</p>
+            <p>Ya son las <strong>{{ hora }}</strong> 🌙</p>
+            <p>Te llamamos desde <strong>Meditime</strong> para recordarte tu medicamento nocturno:</p>
+            <!-- Caja destacada estilo nocturno -->
+            <div style="background-color: #f3e5f5; border-left: 5px solid #9c27b0; padding: 15px; margin: 20px 0; border-radius: 4px; box-shadow: 0 2px 4px rgba(156, 39, 176, 0.2);">
+                <p>Es hora de tomar: <span style="color: #6c5ce7; font-weight: bold; font-size: 18px;">{{ medicamento }}</span></p>
+            </div>
+            <p>🌟 Terminar el día cuidando tu salud es la mejor manera de prepararte para un descanso reparador.</p>
+            <p>Si ya has tomado tu medicamento, veríficalo para completar tu rutina diaria.</p>
+            
+            <!-- Botón estilo nocturno -->
+            <p>
+                <a href="" style="display: inline-block; padding: 12px 25px; border: 2px solid #7b1fa2; color: #7b1fa2; text-decoration: none; border-radius: 25px; font-weight: 500; transition: all 0.3s ease; background-color: transparent;" 
+                   onmouseover="this.style.background='#7b1fa2'; this.style.color='white'" 
+                   onmouseout="this.style.background='transparent'; this.style.color='#7b1fa2'">
+                   ✓ Verificar medicamento
+                </a>
+            </p>
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #f3e5f5; text-align: center;">
+                <p style="color: #666; margin-bottom: 10px;">¡Que descanses bien! Síguenos en:</p>
+                <a href="#" style="margin: 0 10px; color: #6c5ce7; text-decoration: none; font-weight: 500;">Facebook</a> |
+                <a href="#" style="margin: 0 10px; color: #6c5ce7; text-decoration: none; font-weight: 500;">Twitter</a> |
+                <a href="#" style="margin: 0 10px; color: #6c5ce7; text-decoration: none; font-weight: 500;">Instagram</a>
+            </div>
+        </div>
+        <div style="background: linear-gradient(135deg, #6c5ce7, #2d3436); padding: 15px; text-align: center; font-size: 12px; color: white;">
+            <p style="margin: 5px 0; font-weight: 500;">&copy; 2025 Meditime. Todos los derechos reservados.</p>
+            <p style="margin: 5px 0;">Si tienes alguna pregunta, contáctanos en: <a href="mailto:soporte@meditime.com" style="color: white; font-weight: bold;">soporte@meditime.com</a></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+{% endif %}

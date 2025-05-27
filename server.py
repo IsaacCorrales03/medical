@@ -270,7 +270,7 @@ def login():
 @app.route('/logout')
 def logout():
     session['user_id'] = None
-    return render_template('index.html')
+    return url_for('index')
 
 @app.route('/delete_recordatorio_by_id', methods=['DELETE'])
 def delete_rec_by_id():
@@ -294,7 +294,6 @@ def delete_rec_by_id():
     except Exception as e:
         print(f"[Flask] Excepción al eliminar recordatorio: {e}")
         return jsonify({'status': 'error', 'message': str(e)}), 500
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

@@ -157,7 +157,7 @@ class Reminder:
             timer_key: Clave del timer para limpieza
         """
         requests.get(f"{self.service_url}tipo=recordatorio&nombre={recordatorio['nombre']}&hora={recordatorio['hora']}&correo={recordatorio['user_email']}")
-
+        
         
         # Limpiar timer de la lista
         if timer_key in self.timers:
