@@ -38,9 +38,15 @@ class DataBaseManager:
             Number VARCHAR(100) NOT NULL,
             Type VARCHAR(100) NOT NULL,
             Password VARCHAR(255) NOT NULL
-
         );"""
 
+        mensajes_table = """CREATE TABLE IF NOT EXISTS Mensajes(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            contenido TEXT NOT NULL,
+            usuario_id INTEGER NOT NULL,
+            hora_envio DATETIME DEFAULT (datetime('now', '-6 hours')),
+            FOREIGN KEY(usuario_id) REFERENCES Usuarios(Id)
+        );"""
         
         medicamentos_table = """CREATE TABLE IF NOT EXISTS Medicamentos(
             Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -64,11 +70,68 @@ class DataBaseManager:
             );"""
         
         cursor.execute(users_table)
+        cursor.execute(mensajes_table)
         cursor.execute(medicamentos_table)
         cursor.execute(recordatorios_table)
-
         self._get_connection().commit()
-        print("Tablas creadas...")
+    
+    def get_all_messages(self):
+        cursor = self._get_cursor() 
+        query = """
+            SELECT m.id, m.contenido, u.Username, u.Type, m.hora_envio, u.Id as usuario_id
+            FROM Mensajes m
+            INNER JOIN Usuarios u ON m.usuario_id = u.Id
+            ORDER BY m.hora_envio ASC
+        """
+        cursor.execute(query)
+        messages = cursor.fetchall()
+        
+        return [
+            {
+                'id': msg[0],
+                'contenido': msg[1],
+                'username': msg[2],
+                'tipo_usuario': msg[3],
+                'hora_envio': msg[4],
+                'usuario_id': msg[5]
+            }
+            for msg in messages
+        ]
+
+    def create_message(self, contenido, usuario_id):
+        cursor = self._get_cursor()
+        
+        # Insertar el mensaje
+        cursor.execute(
+            "INSERT INTO Mensajes (contenido, usuario_id) VALUES (?, ?)",
+            (contenido, usuario_id)
+        )
+        self._get_connection().commit()
+        
+        # Obtener el ID del mensaje recién creado
+        message_id = cursor.lastrowid
+        
+        # Obtener los datos completos del mensaje con información del usuario
+        cursor.execute("""
+            SELECT m.id, m.contenido, u.Username, u.Type, m.hora_envio, u.Id as usuario_id
+            FROM Mensajes m
+            INNER JOIN Usuarios u ON m.usuario_id = u.Id
+            WHERE m.id = ?
+        """, (message_id,))
+        
+        message_data = cursor.fetchone()
+        
+        if message_data:
+            return {
+                'id': message_data[0],
+                'contenido': message_data[1],
+                'username': message_data[2],
+                'tipo_usuario': message_data[3],
+                'hora_envio': message_data[4],
+                'usuario_id': message_data[5]
+            }
+        
+        return None
 
     def create_user(self, username, email, password, number, type):
         cursor = self._get_cursor()

@@ -6,13 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Añade Alpine JS para la funcionalidad del menú -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <title>{% block title %} {% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/template.css') }}">
     {% block extra_css %}{% endblock %}
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        /* Transiciones para el menú móvil */
+        .mobile-menu {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .mobile-menu-item {
+            transition: background-color 0.2s ease;
+        }
+    </style>
 </head>
 
-<body>
+<body class="min-h-screen flex flex-col">
     <nav class="bg-white shadow-md" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
@@ -35,9 +51,9 @@
                             class="{% if request.endpoint == 'medicamentos' %}border-primary text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Medicamentos
                         </a>
-                        <a href="#"
+                        <a href="{{ url_for('blog') }}"
                             class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                            Blog
+                            Foro
                         </a>
                     </div>
                 </div>
@@ -67,57 +83,67 @@
 
                 <!-- Botón de menú móvil -->
                 <div class="flex items-center sm:hidden">
-                    <button @click="open = !open"
-                        class="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-secondary">
+                    <button @click="open = !open" type="button"
+                        class="p-2 rounded-md text-gray-500 hover:text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-secondary"
+                        aria-controls="mobile-menu" :aria-expanded="open ? 'true' : 'false'">
                         <span class="sr-only">Abrir menú</span>
-                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
+                        <!-- Icono de hamburguesa (mostrar cuando el menú está cerrado) -->
+                        <svg class="h-6 w-6" :class="{'hidden': open, 'block': !open}"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 6h16M4 12h16M4 18h16" x-show="!open"></path>
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <!-- Icono de X (mostrar cuando el menú está abierto) -->
+                        <svg class="h-6 w-6" :class="{'hidden': !open, 'block': open}"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12" x-show="open"></path>
+                                d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
             </div>
         </div>
-
-        <!-- Menú móvil -->
-        <div x-show="open" class="sm:hidden" x-cloak>
+        <div x-show="open" x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 transform -translate-y-2"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 transform translate-y-0"
+            x-transition:leave-end="opacity-0 transform -translate-y-2" x-cloak class="sm:hidden mobile-menu"
+            id="mobile-menu" style="display: none;">
             <div class="pt-2 pb-3 space-y-1">
                 <a href="{{ url_for('index') }}"
-                    class="{% if request.endpoint == 'index' %}bg-gray-50 border-primary text-primary{% else %}border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+                    class="{% if request.endpoint == 'index' %}bg-gray-50 border-primary text-primary{% else %}border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800{% endif %} mobile-menu-item block pl-3 pr-4 py-3 border-l-4 text-base font-medium">
                     Inicio
                 </a>
                 <a href="{{ url_for('medicamentos') }}"
-                    class="{% if request.endpoint == 'medicamentos' %}bg-gray-50 border-primary text-primary{% else %}border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+                    class="{% if request.endpoint == 'medicamentos' %}bg-gray-50 border-primary text-primary{% else %}border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800{% endif %} mobile-menu-item block pl-3 pr-4 py-3 border-l-4 text-base font-medium">
                     Medicamentos
                 </a>
-                <a href="#"
-                    class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                    Blog
+                <a href="{{ url_for('blog') }}"
+                    class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 mobile-menu-item block pl-3 pr-4 py-3 border-l-4 text-base font-medium">
+                    Foro
                 </a>
             </div>
 
             <!-- Botones de sesión (móvil) -->
             <div class="pt-4 pb-3 border-t border-gray-200">
-                <div class="px-4 space-y-2">
+                <div class="px-4 space-y-3">
                     {% if session.user_id %}
                     <a href="{{ url_for('dashboard') }}"
-                        class="block w-full bg-primary hover:bg-primary-light px-4 py-2 text-sm font-medium text-white rounded-md shadow-sm text-center transition-colors">
+                        class="block w-full bg-primary hover:bg-primary-light px-4 py-3 text-base font-medium text-white rounded-md shadow-sm text-center transition-colors">
                         Mi perfil
                     </a>
                     <a href="{{ url_for('logout') }}"
-                        class="block w-full bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-md border border-gray-300 text-center transition-colors">
+                        class="block w-full bg-white px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md border border-gray-300 text-center transition-colors">
                         Cerrar sesión
                     </a>
                     {% else %}
                     <a href="{{ url_for('register') }}"
-                        class="block w-full bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-md border border-gray-300 text-center transition-colors">
+                        class="block w-full bg-white px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md border border-gray-300 text-center transition-colors">
                         Registrarse
                     </a>
                     <a href="{{ url_for('login') }}"
-                        class="block w-full bg-primary hover:bg-primary-light px-4 py-2 text-sm font-medium text-white rounded-md shadow-sm text-center transition-colors">
+                        class="block w-full bg-primary hover:bg-primary-light px-4 py-3 text-base font-medium text-white rounded-md shadow-sm text-center transition-colors">
                         Iniciar sesión
                     </a>
                     {% endif %}
@@ -126,7 +152,7 @@
         </div>
     </nav>
 
-    <main>
+    <main class="flex-grow">
         {% block content %}{% endblock %}
     </main>
 
@@ -149,7 +175,6 @@
                             </button>
                         </div>
                     </form>
-
                 </div>
             </div>
             <div class="mt-8 border-t border-gray-700 pt-8 md:flex md:items-center md:justify-between">

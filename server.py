@@ -1,18 +1,23 @@
 from flask import * 
 from database import DataBaseManager
 from flask_mail import Message, Mail
+from flask_socketio import SocketIO, emit, join_room, leave_room
+
 from dotenv import load_dotenv
 from reminder import Reminder
 import os
 import random
 import string
+from datetime import datetime
 
 load_dotenv()
 
 verification_codes = {}
 
 app = Flask("__main__")
+socketio = SocketIO(app, cors_allowed_origins="*")
 reminder_system = Reminder()
+mail = Mail(app)
 
 app.static_folder = 'static'
 
@@ -25,9 +30,6 @@ app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS') == 'True'
 app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL') == 'True'
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
-
-mail = Mail(app)
-
 
 url_service = ''
 
@@ -105,6 +107,7 @@ def enviar_correo():
 
 my_db = DataBaseManager()
 my_db.create_tables()
+
 @app.route('/')
 def index():
     categorias = my_db.get_all_categorias()
@@ -121,6 +124,55 @@ verification_codes = {}
 def generate_verification_code():
     """Genera un código de verificación de 6 dígitos"""
     return ''.join(random.choices(string.digits, k=6))
+
+@app.route('/blog')
+def blog():
+    if 'user_id' not in session:
+        return redirect('/login')  # Redirigir al login si no está autenticado
+    
+    messages = my_db.get_all_messages()
+    return render_template('blog.html', messages=messages)
+
+# Endpoint para enviar mensaje
+@app.route('/send_message', methods=['POST'])
+def send_message():
+    if 'user_id' not in session:
+        return jsonify({'error': 'No autenticado'}), 401
+    
+    data = request.json
+    contenido = data.get('contenido', '').strip()
+    if not contenido:
+        return jsonify({'error': 'El mensaje no puede estar vacío'}), 400
+    
+    if len(contenido) > 500:
+        return jsonify({'error': 'El mensaje es demasiado largo (máximo 500 caracteres)'}), 400
+    
+    try:
+        # Crear el mensaje usando el método de la clase
+        message_data = my_db.create_message(contenido, session['user_id'])
+        
+        if message_data:
+            # Emitir el mensaje a todos los clientes conectados
+            socketio.emit('new_message', message_data)
+            print(message_data)
+            return jsonify({'success': True, 'message': message_data})
+        else:
+            return jsonify({'error': 'Error al crear el mensaje'}), 500
+            
+    except Exception as e:
+        print(f"Error al crear mensaje: {e}")
+        return jsonify({'error': 'Error interno del servidor'}), 500
+
+# Eventos de Socket.IO
+@socketio.on('connect')
+def handle_connect():
+    print(f'Usuario conectado: {session.get("username", "Desconocido")}')
+    emit('status', {'msg': f'{session.get("username", "Usuario")} se ha conectado'})
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print(f'Usuario desconectado: {session.get("username", "Desconocido")}')
+
 
 @app.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
@@ -271,8 +323,66 @@ def login():
 @app.route('/logout')
 def logout():
     session['user_id'] = None
-    return render_template('index')
+    return render_template('index.html')
 
+@app.route('/api/medicamentos', methods=['POST'])
+def agregar_medicamento():
+    try:
+        # Verificar que el usuario esté autenticado
+        if 'user_id' not in session:
+            return jsonify({'error': 'Usuario no autenticado'}), 401
+        
+        
+        # Obtener datos del formulario
+        data = request.get_json()
+        
+        # Validar campos requeridos
+        required_fields = ['nombre', 'uso', 'dosis', 'categoria']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'error': f'El campo {field} es requerido'}), 400
+        
+        # Extraer datos del medicamento
+        nombre = data.get('nombre').strip()
+        uso = data.get('uso').strip()
+        dosis = data.get('dosis').strip()
+        categoria = data.get('categoria').strip()
+        efectos_secundarios = data.get('efectos_secundarios', '').strip()
+        recomendaciones_alimenticias = data.get('recomendaciones_alimenticias', '').strip()
+        
+        # Validar que el nombre no esté vacío después del strip
+        if not nombre:
+            return jsonify({'error': 'El nombre del medicamento no puede estar vacío'}), 400
+        
+        
+        # Agregar el medicamento a la base de datos
+        my_db.add_medicamento(
+            nombre=nombre,
+            uso=uso,
+            dosis=dosis,
+            categoria=categoria,
+            efectos_secundarios=efectos_secundarios,
+            recomendaciones_alimenticias=recomendaciones_alimenticias
+        )
+        
+        return jsonify({
+            'message': 'Medicamento agregado exitosamente',
+            'medicamento': {
+                'nombre': nombre,
+                'uso': uso,
+                'dosis': dosis,
+                'categoria': categoria,
+                'efectos_secundarios': efectos_secundarios,
+                'recomendaciones_alimenticias': recomendaciones_alimenticias
+            }
+        }), 201
+        
+    except Exception as e:
+        print(f"Error al agregar medicamento: {str(e)}")
+        return jsonify({'error': 'Error interno del servidor'}), 500
+
+
+    
 @app.route('/delete_recordatorio_by_id', methods=['DELETE'])
 def delete_rec_by_id():
     try:
@@ -444,4 +554,4 @@ def medicamentos():
 if __name__ == '__main__':
 
     reminder_system.start_daily_reminder_system()
-    app.run(host='0.0.0.0',debug=True, port=1010)
+    socketio.run(app, host='0.0.0.0',debug=True, port=5000)
