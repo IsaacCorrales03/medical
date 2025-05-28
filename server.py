@@ -555,4 +555,4 @@ def medicamentos():
 if __name__ == '__main__':
 
     reminder_system.start_daily_reminder_system()
-    socketio.run(app, host='0.0.0.0',debug=True, port=5000)
+    socketio.run(app, host='0.0.0.0',debug=True, port=5000, allow_unsafe_werkzeug=True)
