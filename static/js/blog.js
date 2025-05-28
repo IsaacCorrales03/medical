@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const scrollToBottomBtn = document.getElementById('scroll-to-bottom');
     
     // Inicializar SocketIO
-    const socket = io('http://192.168.1.14:5000');
+    const socket = io('https://medical-zuhb.onrender.com:5000');
     
     // Función mejorada para scroll automático
     function scrollToBottom(smooth = true) {
