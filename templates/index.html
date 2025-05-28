@@ -3,183 +3,227 @@
 {% block title %}Inicio{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}
 {% block content %}
 <!-- Hero con buscador -->
 <div class="search-container py-16 sm:py-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center">
+            <!-- Icono principal del hero -->
+            <div class="flex justify-center mb-6">
+                <div class="bg-white bg-opacity-20 rounded-full p-6 backdrop-blur-sm">
+                    <i class="fas fa-pills text-6xl text-white animate-pulse"></i>
+                </div>
+            </div>
+            
             <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl">
-                <span class="block">Toda la información sobre</span>
-                <span class="block">medicamentos a tu alcance</span>
+                <span class="block flex items-center justify-center gap-3">
+                    <i class="fas fa-prescription-bottle-alt text-4xl md:text-5xl"></i>
+                    Toda la información sobre
+                </span>
+                <span class="block flex items-center justify-center gap-3 mt-2">
+                    medicamentos a tu alcance
+                    <i class="fas fa-heartbeat text-4xl md:text-5xl text-red-300"></i>
+                </span>
             </h1>
-            <p class="mt-3 max-w-md mx-auto text-base text-white opacity-90 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+            <p class="mt-3 max-w-md mx-auto text-base text-white opacity-90 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl flex items-center justify-center gap-2">
+                <i class="fas fa-search text-xl"></i>
                 Busca información precisa y actualizada sobre dosis, efectos secundarios, interacciones y mucho más.
             </p>
             <div class="mt-10 max-w-xl mx-auto">
                 <form class="flex items-center search-animation bg-white rounded-full shadow-xl p-1"
                     action="/medicamentos" method="GET">
                     <div class="pl-4 flex items-center pointer-events-none">
-                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                            fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                clip-rule="evenodd" />
-                        </svg>
+                        <i class="fas fa-search text-gray-400 text-lg"></i>
                     </div>
                     <input class="w-full pl-3 pr-10 py-3 rounded-full text-gray-900 focus:outline-none" type="text"
                         name="name" placeholder="Buscar medicamento (ej. Paracetamol, Ibuprofeno...)">
                     <button type="submit"
-                        class="bg-primary hover:bg-primary-light text-white font-bold py-3 px-6 rounded-full transition duration-150 ease-in-out mr-1">
+                        class="text-white font-bold py-3 px-6 rounded-full transition duration-150 ease-in-out mr-1 flex items-center gap-2"
+                        style="background-color: #d53d70; hover:background-color: #f74f8c;">
+                        <i class="fas fa-search"></i>
                         Buscar
                     </button>
                 </form>
             </div>
         </div>
     </div>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 ">
-        <div class="flex flex-wrap justify-center gap-3 " id="medication-pills">
-
+    
+    <!-- Pills de medicamentos populares con iconos -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+        <div class="text-center mb-6">
+            <p class="text-white opacity-80 flex items-center justify-center gap-2">
+                <i class="fas fa-star text-yellow-300"></i>
+                Medicamentos más buscados
+                <i class="fas fa-star text-yellow-300"></i>
+            </p>
+        </div>
+        <div class="flex flex-wrap justify-center gap-3" id="medication-pills">
         </div>
     </div>
 </div>
 
-<!-- Características -->
+<!-- Características con iconos mejorados -->
 <div class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="lg:text-center">
-            <h2 class="text-base text-primary font-semibold tracking-wide uppercase">Características</h2>
-            <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <i class="fas fa-certificate text-2xl" style="color: #d53d70;"></i>
+                <h2 class="text-base font-semibold tracking-wide uppercase" style="color: #d53d70;">Características</h2>
+                <i class="fas fa-certificate text-2xl" style="color: #d53d70;"></i>
+            </div>
+            <p class="mt-2 text-3xl leading-8 font-extrebold tracking-tight text-gray-900 sm:text-4xl flex items-center justify-center gap-3 flex-wrap">
+                <i class="fas fa-shield-alt text-3xl" style="color: #4dbdc1;"></i>
                 Todo lo que necesitas saber sobre tus medicamentos
+                <i class="fas fa-user-md text-3xl" style="color: #4dbdc1;"></i>
             </p>
-            <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+            <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto flex items-center justify-center gap-2">
+                <i class="fas fa-info-circle text-blue-500"></i>
                 Información completa y actualizada para ayudarte a entender tus tratamientos médicos
             </p>
         </div>
 
         <div class="mt-16">
             <div class="space-y-10 md:space-y-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-10">
-                <div class="card bg-white p-6 rounded-xl shadow-lg">
-                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-secondary text-white mb-4">
-                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
+                <div class="card bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 group">
+                    <div class="flex items-center justify-center h-16 w-16 rounded-full text-white mb-4 mx-auto group-hover:scale-110 transition-transform duration-300"
+                         style="background: linear-gradient(to right, #4dbdc1, #52e2d9);">
+                        <i class="fas fa-file-medical-alt text-2xl"></i>
                     </div>
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">Información Detallada</h3>
-                    <p class="mt-2 text-base text-gray-500">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 text-center flex items-center justify-center gap-2">
+                        <i class="fas fa-clipboard-list" style="color: #4dbdc1;"></i>
+                        Información Detallada
+                    </h3>
+                    <p class="mt-2 text-base text-gray-500 text-center">
                         Accede a información completa sobre dosis, efectos secundarios, contraindicaciones y mecanismos
                         de acción.
                     </p>
+                    <div class="flex justify-center gap-3 mt-4 opacity-50" style="color: #4dbdc1;">
+                        <i class="fas fa-pills"></i>
+                        <i class="fas fa-syringe"></i>
+                        <i class="fas fa-capsules"></i>
+                    </div>
                 </div>
 
-                <div class="card bg-white p-6 rounded-xl shadow-lg">
-                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-primary text-white mb-4">
-                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                <div class="card bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 group">
+                    <div class="flex items-center justify-center h-16 w-16 rounded-full text-white mb-4 mx-auto group-hover:scale-110 transition-transform duration-300"
+                         style="background: linear-gradient(to right, #d53d70, #f74f8c);">
+                        <i class="fas fa-exclamation-triangle text-2xl"></i>
                     </div>
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">Alertas e Interacciones</h3>
-                    <p class="mt-2 text-base text-gray-500">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 text-center flex items-center justify-center gap-2">
+                        <i class="fas fa-balance-scale" style="color: #d53d70;"></i>
+                        Alertas e Interacciones
+                    </h3>
+                    <p class="mt-2 text-base text-gray-500 text-center">
                         Conoce las posibles interacciones con otros medicamentos, alimentos o condiciones médicas.
                     </p>
+                    <div class="flex justify-center gap-3 mt-4 text-red-400 opacity-50">
+                        <i class="fas fa-ban"></i>
+                        <i class="fas fa-utensils"></i>
+                        <i class="fas fa-heart-pulse"></i>
+                    </div>
                 </div>
 
-                <div class="card bg-white p-6 rounded-xl shadow-lg">
-                    <div
-                        class="flex items-center justify-center h-12 w-12 rounded-md bg-secondary-light text-white mb-4">
-                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
+                <div class="card bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 group">
+                    <div class="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-r from-green-400 to-green-600 text-white mb-4 mx-auto group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-book-medical text-2xl"></i>
                     </div>
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">Guías Prácticas</h3>
-                    <p class="mt-2 text-base text-gray-500">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 text-center flex items-center justify-center gap-2">
+                        <i class="fas fa-route text-green-600"></i>
+                        Guías Prácticas
+                    </h3>
+                    <p class="mt-2 text-base text-gray-500 text-center">
                         Instrucciones claras sobre cómo tomar los medicamentos y consejos para optimizar tu tratamiento.
                     </p>
+                    <div class="flex justify-center gap-3 mt-4 text-green-400 opacity-50">
+                        <i class="fas fa-clock"></i>
+                        <i class="fas fa-calendar-check"></i>
+                        <i class="fas fa-thumbs-up"></i>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Sección de categorías -->
+<!-- Sección de categorías mejorada -->
 <div class="py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-gray-900 text-center mb-10">Explora por categorías</h2>
+        <div class="text-center mb-10">
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <i class="fas fa-th-large text-3xl animate-bounce" style="color: #d53d70;"></i>
+                <h2 class="text-3xl font-bold text-gray-900">Explora por categorías</h2>
+                <i class="fas fa-th-large text-3xl animate-bounce" style="color: #d53d70;"></i>
+            </div>
+            <p class="text-gray-600 flex items-center justify-center gap-2">
+                <i class="fas fa-mouse-pointer text-blue-500"></i>
+                Haz clic en cualquier categoría para explorar
+            </p>
+        </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
             {% for categoria in categorias %}
-            <div class="group bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl cursor-pointer"
+            <div class="group bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
                  onclick="buscarPorCategoria('{{ categoria }}')">
                 <!-- Barra de color aleatoria -->
-                <div class="h-2 {{ loop.cycle('bg-primary', 'bg-secondary', 'bg-secondary-lighter', 'bg-primary-light') }}"></div>
+                <div class="h-3 {% if loop.index0 % 4 == 0 %}bg-gradient-to-r{% else %}bg-gradient-to-r{% endif %}"
+                     style="background: linear-gradient(to right, 
+                     {% if loop.index0 % 4 == 0 %}#d53d70, #f74f8c
+                     {% elif loop.index0 % 4 == 1 %}#4dbdc1, #52e2d9
+                     {% elif loop.index0 % 4 == 2 %}#10b981, #34d399
+                     {% else %}#8b5cf6, #a78bfa{% endif %});"></div>
                 
-                <div class="p-5">
-                    <!-- Ícono dinámico basado en la categoría -->
-                    {% if 'cardiovascular' in categoria.lower() or 'corazón' in categoria.lower() %}
-                        <svg class="h-8 w-8 text-secondary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                        </svg>
-                    {% elif 'antibiótico' in categoria.lower() or 'infección' in categoria.lower() %}
-                        <svg class="h-8 w-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z" />
-                        </svg>
-                    {% elif 'analgésico' in categoria.lower() or 'dolor' in categoria.lower() %}
-                        <svg class="h-8 w-8 text-secondary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                    {% elif 'nervioso' in categoria.lower() or 'neurológico' in categoria.lower() %}
-                        <svg class="h-8 w-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                    {% elif 'digestivo' in categoria.lower() or 'estómago' in categoria.lower() %}
-                        <svg class="h-8 w-8 text-secondary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                        </svg>
-                    {% elif 'respiratorio' in categoria.lower() or 'pulmón' in categoria.lower() %}
-                        <svg class="h-8 w-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                        </svg>
-                    {% elif 'cápsula' in categoria.lower() %}
-                        <svg class="h-8 w-8 text-secondary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                        </svg>
-                    {% elif 'inhalador' in categoria.lower() %}
-                        <svg class="h-8 w-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                    {% elif 'inyectable' in categoria.lower() %}
-                        <svg class="h-8 w-8 text-secondary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-10 0a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2M9 12l2 2 4-4" />
-                        </svg>
-                    {% elif 'parche' in categoria.lower() %}
-                        <svg class="h-8 w-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                    {% elif 'pastilla' in categoria.lower() %}
-                        <svg class="h-8 w-8 text-secondary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                        </svg>
-                    {% elif 'sublingual' in categoria.lower() %}
-                        <svg class="h-8 w-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                    {% else %}
-                        <!-- Ícono genérico para medicamentos -->
-                        <svg class="h-8 w-8 {{ loop.cycle('text-primary', 'text-secondary') }} mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                        </svg>
-                    {% endif %}
+                <div class="p-6 text-center">
+                    <!-- Contenedor del icono con estilos mejorados -->
+                    <div class="flex items-center justify-center mb-4 relative">
+                        <div class="absolute inset-0 rounded-full group-hover:scale-125 transition-transform duration-300"
+                             style="background: linear-gradient(to right, 
+                             {% if loop.index0 % 4 == 0 %}rgba(213, 61, 112, 0.1), rgba(247, 79, 140, 0.1)
+                             {% elif loop.index0 % 4 == 1 %}rgba(77, 189, 193, 0.1), rgba(82, 226, 217, 0.1)
+                             {% elif loop.index0 % 4 == 2 %}rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.1)
+                             {% else %}rgba(139, 92, 246, 0.1), rgba(167, 139, 250, 0.1){% endif %});"></div>
+                        {% if 'cápsula' in categoria.lower() %}
+                            <i class="fa-solid fa-capsules text-5xl group-hover:scale-110 transition-transform duration-300 relative z-10"
+                               style="color: {% if loop.index0 % 4 == 0 %}#d53d70{% elif loop.index0 % 4 == 1 %}#4dbdc1{% elif loop.index0 % 4 == 2 %}#10b981{% else %}#8b5cf6{% endif %};"></i>
+                        {% elif 'inhalador' in categoria.lower() %}
+                            <i class="fa-solid fa-lungs text-5xl group-hover:scale-110 transition-transform duration-300 relative z-10"
+                               style="color: {% if loop.index0 % 4 == 0 %}#d53d70{% elif loop.index0 % 4 == 1 %}#4dbdc1{% elif loop.index0 % 4 == 2 %}#10b981{% else %}#8b5cf6{% endif %};"></i>
+                        {% elif 'inyectable' in categoria.lower() %}
+                            <i class="fa-solid fa-syringe text-5xl group-hover:scale-110 transition-transform duration-300 relative z-10"
+                               style="color: {% if loop.index0 % 4 == 0 %}#d53d70{% elif loop.index0 % 4 == 1 %}#4dbdc1{% elif loop.index0 % 4 == 2 %}#10b981{% else %}#8b5cf6{% endif %};"></i>
+                        {% elif 'parche' in categoria.lower() %}
+                            <i class="fa-solid fa-bandage text-5xl group-hover:scale-110 transition-transform duration-300 relative z-10"
+                               style="color: {% if loop.index0 % 4 == 0 %}#d53d70{% elif loop.index0 % 4 == 1 %}#4dbdc1{% elif loop.index0 % 4 == 2 %}#10b981{% else %}#8b5cf6{% endif %};"></i>
+                        {% elif 'pastilla' in categoria.lower() %}
+                            <i class="fas fa-tablets text-5xl group-hover:scale-110 transition-transform duration-300 relative z-10"
+                               style="color: {% if loop.index0 % 4 == 0 %}#d53d70{% elif loop.index0 % 4 == 1 %}#4dbdc1{% elif loop.index0 % 4 == 2 %}#10b981{% else %}#8b5cf6{% endif %};"></i>
+                        {% elif 'sublingual' in categoria.lower() %}
+                            <i class="fa-solid fa-face-grin-tongue text-5xl group-hover:scale-110 transition-transform duration-300 relative z-10"
+                               style="color: {% if loop.index0 % 4 == 0 %}#d53d70{% elif loop.index0 % 4 == 1 %}#4dbdc1{% elif loop.index0 % 4 == 2 %}#10b981{% else %}#8b5cf6{% endif %};"></i>
+                        {% else %}
+                            <i class="fa-solid fa-pills text-5xl group-hover:scale-110 transition-transform duration-300 relative z-10"
+                               style="color: {% if loop.index0 % 4 == 0 %}#d53d70{% elif loop.index0 % 4 == 1 %}#4dbdc1{% elif loop.index0 % 4 == 2 %}#10b981{% else %}#8b5cf6{% endif %};"></i>
+                        {% endif %}
+                    </div>
                     
-                    <h3 class="font-semibold text-lg text-gray-900 group-hover:{{ loop.cycle('text-primary', 'text-secondary') }} transition-colors duration-300">
+                    <h3 class="font-semibold text-lg text-gray-900 transition-colors duration-300 flex items-center justify-center gap-2"
+                        onmouseover="this.style.color='{% if loop.index0 % 4 == 0 %}#d53d70{% elif loop.index0 % 4 == 1 %}#4dbdc1{% elif loop.index0 % 4 == 2 %}#059669{% else %}#7c3aed{% endif %}'"
+                        onmouseout="this.style.color='#111827'">
+                        <i class="fas fa-folder-open text-sm opacity-70"></i>
                         {{ categoria }}
                     </h3>
-                    <p class="mt-1 text-sm text-gray-500">Explorar medicamentos de esta categoría</p>
+                    <p class="mt-1 text-sm text-gray-500 flex items-center justify-center gap-1">
+                        <i class="fas fa-arrow-right text-xs"></i>
+                        Explorar medicamentos de esta categoría
+                    </p>
+                    
+                    <!-- Indicador de cantidad -->
+                    <div class="mt-3 flex items-center justify-center gap-1 text-xs text-gray-400">
+                        <i class="fas fa-pills"></i>
+                        <i class="fas fa-pills"></i>
+                        <i class="fas fa-pills"></i>
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -188,177 +232,189 @@
         <!-- Mostrar mensaje si no hay categorías -->
         {% if not categorias %}
         <div class="text-center py-12">
-            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 009.586 13H7" />
-            </svg>
-            <h3 class="mt-2 text-sm font-medium text-gray-900">No hay categorías disponibles</h3>
-            <p class="mt-1 text-sm text-gray-500">Agrega algunos medicamentos para ver las categorías aquí.</p>
+            <div class="flex justify-center mb-4">
+                <i class="fas fa-box-open text-6xl text-gray-300"></i>
+            </div>
+            <h3 class="mt-2 text-sm font-medium text-gray-900 flex items-center justify-center gap-2">
+                <i class="fas fa-info-circle text-blue-400"></i>
+                No hay categorías disponibles
+            </h3>
+            <p class="mt-1 text-sm text-gray-500 flex items-center justify-center gap-2">
+                <i class="fas fa-plus-circle text-green-400"></i>
+                Agrega algunos medicamentos para ver las categorías aquí.
+            </p>
         </div>
         {% endif %}
 
         <div class="text-center mt-10">
             <a href="{{ url_for('medicamentos') }}" 
-                class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-secondary hover:bg-secondary-light transition duration-150 ease-in-out">
+                class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-medium rounded-full text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                style="background: linear-gradient(to right, #4dbdc1, #52e2d9);"
+                onmouseover="this.style.background='linear-gradient(to right, #52e2d9, #4dbdc1)'"
+                onmouseout="this.style.background='linear-gradient(to right, #4dbdc1, #52e2d9)'">
+                <i class="fas fa-pills mr-2 text-lg"></i>
                 Ver todos los medicamentos
-                <svg class="ml-2 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
+                <i class="fas fa-arrow-right ml-2 text-lg group-hover:translate-x-1 transition-transform duration-300"></i>
             </a>
         </div>
     </div>
 </div>
 
-<!-- Sección de información médica -->
+<!-- Sección de información médica mejorada -->
 <div class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
             <div>
-                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                    Información médica confiable
-                </h2>
-                <p class="mt-3 max-w-3xl text-lg text-gray-500">
+                <div class="flex items-center gap-3 mb-4">
+                    <i class="fas fa-award text-4xl text-yellow-500"></i>
+                    <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                        Información médica confiable
+                    </h2>
+                </div>
+                <p class="mt-3 max-w-3xl text-lg text-gray-500 flex items-start gap-2">
+                    <i class="fas fa-user-md text-blue-500 text-xl mt-1"></i>
                     Nuestro contenido es elaborado y revisado por profesionales de la salud para garantizar precisión y
                     actualidad.
                 </p>
-                <div class="mt-8 space-y-4">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <svg class="h-6 w-6 text-secondary" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg>
+                <div class="mt-8 space-y-6">
+                    <div class="flex items-start group hover:bg-gray-50 p-3 rounded-lg transition-colors duration-300">
+                        <div class="flex-shrink-0 bg-green-100 rounded-full p-2 group-hover:bg-green-200 transition-colors duration-300">
+                            <i class="fas fa-sync-alt text-green-600 text-xl group-hover:rotate-180 transition-transform duration-500"></i>
                         </div>
-                        <p class="ml-3 text-base text-gray-500">
-                            <strong class="font-medium text-gray-900">Actualizada regularmente</strong> con los últimos
-                            avances y recomendaciones médicas.
-                        </p>
+                        <div class="ml-4">
+                            <p class="text-base text-gray-500">
+                                <strong class="font-medium text-gray-900 flex items-center gap-2">
+                                    <i class="fas fa-calendar-alt text-blue-500"></i>
+                                    Actualizada regularmente
+                                </strong> 
+                                con los últimos avances y recomendaciones médicas.
+                            </p>
+                        </div>
                     </div>
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <svg class="h-6 w-6 text-secondary" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg>
+                    
+                    <div class="flex items-start group hover:bg-gray-50 p-3 rounded-lg transition-colors duration-300">
+                        <div class="flex-shrink-0 bg-blue-100 rounded-full p-2 group-hover:bg-blue-200 transition-colors duration-300">
+                            <i class="fas fa-certificate text-blue-600 text-xl group-hover:scale-110 transition-transform duration-300"></i>
                         </div>
-                        <p class="ml-3 text-base text-gray-500">
-                            <strong class="font-medium text-gray-900">Validada por expertos</strong> en farmacología y
-                            medicina basada en evidencia.
-                        </p>
+                        <div class="ml-4">
+                            <p class="text-base text-gray-500">
+                                <strong class="font-medium text-gray-900 flex items-center gap-2">
+                                    <i class="fas fa-microscope text-purple-500"></i>
+                                    Validada por expertos
+                                </strong> 
+                                en farmacología y medicina basada en evidencia.
+                            </p>
+                        </div>
                     </div>
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <svg class="h-6 w-6 text-secondary" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg>
+                    
+                    <div class="flex items-start group hover:bg-gray-50 p-3 rounded-lg transition-colors duration-300">
+                        <div class="flex-shrink-0 bg-purple-100 rounded-full p-2 group-hover:bg-purple-200 transition-colors duration-300">
+                            <i class="fas fa-lightbulb text-purple-600 text-xl group-hover:animate-pulse"></i>
                         </div>
-                        <p class="ml-3 text-base text-gray-500">
-                            <strong class="font-medium text-gray-900">Explicada de forma clara</strong> para que
-                            cualquier persona pueda entenderla.
-                        </p>
+                        <div class="ml-4">
+                            <p class="text-base text-gray-500">
+                                <strong class="font-medium text-gray-900 flex items-center gap-2">
+                                    <i class="fas fa-comments text-orange-500"></i>
+                                    Explicada de forma clara
+                                </strong> 
+                                para que cualquier persona pueda entenderla.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección visual derecha -->
+            <div class="mt-10 lg:mt-0 flex justify-center">
+                <div class="relative">
+                    <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-8 shadow-2xl">
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div class="group">
+                                <i class="fas fa-stethoscope text-4xl text-blue-500 mb-2 group-hover:scale-125 transition-transform duration-300"></i>
+                                <p class="text-xs text-gray-600">Diagnóstico</p>
+                            </div>
+                            <div class="group">
+                                <i class="fas fa-flask text-4xl text-green-500 mb-2 group-hover:scale-125 transition-transform duration-300"></i>
+                                <p class="text-xs text-gray-600">Análisis</p>
+                            </div>
+                            <div class="group">
+                                <i class="fas fa-heartbeat text-4xl text-red-500 mb-2 group-hover:scale-125 transition-transform duration-300"></i>
+                                <p class="text-xs text-gray-600">Monitoreo</p>
+                            </div>
+                            <div class="group">
+                                <i class="fas fa-prescription text-4xl text-purple-500 mb-2 group-hover:scale-125 transition-transform duration-300"></i>
+                                <p class="text-xs text-gray-600">Recetas</p>
+                            </div>
+                            <div class="group">
+                                <i class="fas fa-shield-alt text-4xl text-indigo-500 mb-2 group-hover:scale-125 transition-transform duration-300"></i>
+                                <p class="text-xs text-gray-600">Seguridad</p>
+                            </div>
+                            <div class="group">
+                                <i class="fas fa-chart-line text-4xl text-orange-500 mb-2 group-hover:scale-125 transition-transform duration-300"></i>
+                                <p class="text-xs text-gray-600">Seguimiento</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<a href="#" class="help-button">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd"
-            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
-            clip-rule="evenodd" />
-    </svg>
-    Ayuda
+
+<!-- Botón de ayuda mejorado -->
+<a href="#" class="help-button fixed bottom-6 right-6 text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 z-50 group"
+   style="background: linear-gradient(to right, #3b82f6, #2563eb);">
+    <div class="flex items-center gap-2">
+        <i class="fas fa-question-circle text-2xl group-hover:rotate-12 transition-transform duration-300"></i>
+        <span class="hidden md:inline font-medium">Ayuda</span>
+    </div>
 </a>
-<div id="helpModal" class="modal flex items-center justify-center" style="display: none;">
-    <div class="modal-content bg-white p-6 max-w-md w-11/12">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold text-primary">Centro de Ayuda</h2>
-            <button id="closeModal" class="text-gray-500 hover:text-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+
+<!-- Modal de ayuda mejorado -->
+<div id="helpModal" class="modal flex items-center justify-center fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50" style="display: none;">
+    <div class="modal-content bg-white p-8 max-w-md w-11/12 rounded-2xl shadow-2xl transform scale-95 transition-all duration-300">
+        <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-headset text-2xl" style="color: #d53d70;"></i>
+                <h2 class="text-2xl font-bold" style="color: #d53d70;">Centro de Ayuda</h2>
+            </div>
+            <button id="closeModal" class="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-full transition-colors duration-300">
+                <i class="fas fa-times text-xl"></i>
             </button>
         </div>
-        <div class="border-t border-gray-200 pt-4">
-            <p class="mb-4">Recibe ayuda llamando al:</p>
+        
+        <div class="border-t border-gray-200 pt-6 space-y-4">
+            <div class="text-center">
+                <i class="fas fa-phone-alt text-3xl mb-3" style="color: #4dbdc1;"></i>
+                <p class="mb-4 text-gray-600">Recibe ayuda llamando al:</p>
+            </div>
+            
             <a href="tel:+50664715781"
-                class="block text-lg font-semibold text-secondary mb-4 hover:text-primary transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20"
-                    fill="currentColor">
-                    <path
-                        d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                </svg>
-                +506 6471 5781
+                class="block text-center text-white py-4 px-6 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 group"
+                style="background: linear-gradient(to right, #4dbdc1, #52e2d9);">
+                <div class="flex items-center justify-center gap-3">
+                    <i class="fas fa-phone text-xl group-hover:animate-bounce"></i>
+                    <span class="text-lg font-semibold">+506 6471 5781</span>
+                </div>
             </a>
-            <p class="mb-4">o mediante nuestra línea de WhatsApp:</p>
+            
+            <div class="text-center py-2">
+                <span class="text-gray-400 text-sm flex items-center justify-center gap-2">
+                    <i class="fas fa-grip-lines-vertical"></i>
+                    <span>o</span>
+                    <i class="fas fa-grip-lines-vertical"></i>
+                </span>
+            </div>
+            
             <a href="https://wa.me/50664715781" target="_blank"
-                class="flex items-center bg-secondary text-white py-2 px-4 rounded-lg hover:bg-secondary-light transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                </svg>
-                WhatsApp: +506 6471 5781
+                class="flex items-center justify-center bg-green-500 text-white py-4 px-6 rounded-xl hover:bg-green-600 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 group">
+                <i class="fab fa-whatsapp text-2xl mr-3 group-hover:scale-125 transition-transform duration-300"></i>
+                <div class="text-left">
+                    <p class="font-semibold">WhatsApp</p>
+                    <p class="text-sm opacity-90">+506 6471 5781</p>
+                </div>
             </a>
         </div>
     </div>
 </div>
-<script>
-    function buscarPorCategoria(categoria) {
-    // Redirigir a la página de búsqueda con filtro de categoría
-    window.location.href = `/medicamentos?categoria=${encodeURIComponent(categoria)}`;
-}
-    // List of medications
-    const medications = [
-        "Paracetamol",
-        "Ibuprofeno",
-        "Amoxicilina",
-        "Omeprazol",
-        "Loratadina",
-        "Metformina"
-    ];
-
-    // Function to handle pill click
-    function handlePillClick(medicationName) {
-        // Redirect to the medication page with the name as a query parameter
-        window.location.href = `/medicamentos?name=${encodeURIComponent(medicationName)}`;
-    }
-
-    // Create and add pills to container
-    document.addEventListener('DOMContentLoaded', function () {
-        const pillContainer = document.getElementById('medication-pills');
-
-        medications.forEach(medication => {
-            const pillButton = document.createElement('button');
-            pillButton.className = 'pill';
-            pillButton.textContent = medication;
-            pillButton.addEventListener('click', () => handlePillClick(medication));
-
-            pillContainer.appendChild(pillButton);
-        });
-        const helpButton = document.querySelector('.help-button');
-        const modal = document.getElementById('helpModal');
-        const closeModal = document.getElementById('closeModal');
-
-        helpButton.addEventListener('click', function (e) {
-            e.preventDefault();
-            modal.style.display = 'flex';
-        });
-
-        closeModal.addEventListener('click', function () {
-            modal.style.display = 'none';
-        });
-
-        window.addEventListener('click', function (e) {
-            if (e.target == modal) {
-                modal.style.display = 'none';
-            }
-        });
-
-    });
-</script>
 {% endblock %}

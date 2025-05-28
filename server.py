@@ -153,6 +153,7 @@ def send_message():
         
         if message_data:
             # Emitir el mensaje a todos los clientes conectados
+            
             socketio.emit('new_message', message_data)
             print(message_data)
             return jsonify({'success': True, 'message': message_data})

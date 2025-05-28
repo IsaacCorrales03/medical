@@ -1,71 +1,321 @@
 {% extends 'template.html' %}
 {% block title %}Medicamentos{% endblock %}
 {% block content %}
+<!-- FontAwesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
     :root {
         --primary: #d53d70;
         --primary-light: #f74f8c;
+        --primary-dark: #b8335c;
         --secondary: #4dbdc1;
         --secondary-light: #52e2d9;
         --secondary-lighter: #93efe4;
+        --secondary-dark: #3da8ac;
+        --accent: #f39c12;
+        --accent-light: #f4d03f;
+        --success: #27ae60;
+        --warning: #e74c3c;
+        --info: #3498db;
+        --dark: #2c3e50;
+        --light: #ecf0f1;
     }
     
-    .bg-primary { background-color: var(--primary); }
-    .bg-primary-light { background-color: var(--primary-light); }
-    .bg-secondary { background-color: var(--secondary); }
-    .bg-secondary-light { background-color: var(--secondary-light); }
-    .bg-secondary-lighter { background-color: var(--secondary-lighter); }
+    .bg-primary { background: linear-gradient(135deg, var(--primary), var(--primary-light)); }
+    .bg-primary-solid { background-color: var(--primary); }
+    .bg-secondary { background: linear-gradient(135deg, var(--secondary), var(--secondary-light)); }
+    .bg-secondary-solid { background-color: var(--secondary); }
+    .bg-accent { background: linear-gradient(135deg, var(--accent), var(--accent-light)); }
+    .bg-gradient-main { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
     
     .text-primary { color: var(--primary); }
     .text-secondary { color: var(--secondary); }
+    .text-accent { color: var(--accent); }
     
     .border-primary { border-color: var(--primary); }
     .border-secondary { border-color: var(--secondary); }
     
     .hover-shadow:hover {
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        transform: translateY(-2px);
+    }
+    
+    .card-hover:hover {
+        transform: scale(1.02);
+        transition: all 0.3s ease;
+    }
+    
+    .icon-bg {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .category-badge {
+        background: linear-gradient(45deg, var(--accent), var(--accent-light));
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .info-item {
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 10px;
+        border-left: 4px solid var(--secondary);
+        transition: all 0.3s ease;
+    }
+    
+    .info-item:hover {
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .header-container {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        padding: 60px 0 40px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .header-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+    }
+    
+    .floating-icon {
+        position: absolute;
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .no-data-container {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 20px;
+        padding: 60px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .pulse-icon {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
     }
 </style>
 
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-center mb-8 text-primary">Lista de Medicamentos</h1>
-    
-    {% if medicamentos %}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for medicamento in medicamentos %}
-        <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover-shadow transition-shadow">
-            <div class="bg-primary p-4">
-                <h2 class="text-xl font-bold text-white">{{ medicamento[1] }}</h2>
+<!-- Header con diseño mejorado -->
+<div class="header-container relative">
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center">
+            <div class="mb-4">
+                <i class="fas fa-pills text-6xl text-white opacity-90"></i>
             </div>
-            <div class="p-4">
-                <p class="text-gray-700 mb-4">{{ medicamento[2] }}</p>
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+                <i class="fas fa-heartbeat mr-3"></i>
+                Lista de Medicamentos
+            </h1>
+            <p class="text-xl text-white opacity-90">
+                <i class="fas fa-shield-alt mr-2"></i>
+                Información completa y segura sobre medicamentos
+            </p>
+        </div>
+    </div>
+    
+    <!-- Iconos flotantes decorativos -->
+    <div class="floating-icon top-10 left-10">
+        <i class="fas fa-stethoscope text-3xl text-white opacity-20"></i>
+    </div>
+    <div class="floating-icon top-20 right-20" style="animation-delay: 1s;">
+        <i class="fas fa-syringe text-2xl text-white opacity-20"></i>
+    </div>
+    <div class="floating-icon bottom-10 left-20" style="animation-delay: 2s;">
+        <i class="fas fa-microscope text-2xl text-white opacity-20"></i>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 py-8">
+    {% if medicamentos %}
+    <!-- Estadísticas rápidas -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-gradient-main text-white p-6 rounded-xl text-center card-hover">
+            <i class="fas fa-capsules text-3xl mb-3"></i>
+            <h3 class="text-2xl font-bold">{{ medicamentos|length }}</h3>
+            <p class="text-sm opacity-90">Total Medicamentos</p>
+        </div>
+        <div class="bg-accent text-white p-6 rounded-xl text-center card-hover">
+            <i class="fas fa-flask text-3xl mb-3"></i>
+            <h3 class="text-2xl font-bold">Active</h3>
+            <p class="text-sm opacity-90">Principios Activos</p>
+        </div>
+        <div class="bg-secondary text-white p-6 rounded-xl text-center card-hover">
+            <i class="fas fa-shield-virus text-3xl mb-3"></i>
+            <h3 class="text-2xl font-bold">Safe</h3>
+            <p class="text-sm opacity-90">Medicamentos Seguros</p>
+        </div>
+        <div class="bg-primary-solid text-white p-6 rounded-xl text-center card-hover">
+            <i class="fas fa-user-md text-3xl mb-3"></i>
+            <h3 class="text-2xl font-bold">Medical</h3>
+            <p class="text-sm opacity-90">Aprobación Médica</p>
+        </div>
+    </div>
+    
+    <!-- Grid de medicamentos mejorado -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for medicamento in medicamentos %}
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover-shadow transition-all duration-300 card-hover">
+            <!-- Header de la tarjeta -->
+            <div class="bg-primary p-6 relative">
+                <div class="flex items-center justify-between">
+                    <div class="icon-bg">
+                        <i class="fas fa-pills text-2xl text-white"></i>
+                    </div>
+                    <div class="category-badge">
+                        <i class="fas fa-tag"></i>
+                        {{ medicamento[4] }}
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold text-white mt-4 mb-2">
+                    <i class="fas fa-prescription-bottle-alt mr-2"></i>
+                    {{ medicamento[1] }}
+                </h2>
+            </div>
+            
+            <!-- Contenido de la tarjeta -->
+            <div class="p-6">
+                <!-- Descripción -->
+                <div class="info-item">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-info-circle text-xl text-secondary mt-1"></i>
+                        <div>
+                            <h3 class="font-semibold text-primary mb-1">Descripción</h3>
+                            <p class="text-gray-700">{{ medicamento[2] }}</p>
+                        </div>
+                    </div>
+                </div>
                 
-                <div class="mb-3">
-                    <h3 class="font-semibold text-primary">Dosis:</h3>
-                    <p class="text-gray-600">{{ medicamento[3] }}</p>
-                </div>
-                <div class="mb-3">
-                    <h3 class="font-semibold text-primary-light">Categoría:</h3>
-                    <p class="text-gray-600">{{ medicamento[4] }}</p>
-                </div>
-                <div class="mb-3">
-                    <h3 class="font-semibold text-primary-light">Efectos secundarios:</h3>
-                    <p class="text-gray-600">{{ medicamento[5] }}</p>
+                <!-- Dosis -->
+                <div class="info-item">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-prescription text-xl text-accent mt-1"></i>
+                        <div>
+                            <h3 class="font-semibold text-primary mb-1">
+                                
+                                Dosis Recomendada
+                            </h3>
+                            <p class="text-gray-700 font-medium">{{ medicamento[3] }}</p>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="mb-3">
-                    <h3 class="font-semibold text-secondary">Recomendaciones:</h3>
-                    <p class="text-gray-600">{{ medicamento[6] }}</p>
+                <!-- Efectos secundarios -->
+                <div class="info-item">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-exclamation-triangle text-xl text-warning mt-1"></i>
+                        <div>
+                            <h3 class="font-semibold text-primary mb-1">
+                               
+                                Efectos Secundarios
+                            </h3>
+                            <p class="text-gray-700">{{ medicamento[5] }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recomendaciones -->
+                <div class="info-item border-l-4 border-l-success">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-lightbulb text-xl text-success mt-1"></i>
+                        <div>
+                            <h3 class="font-semibold text-primary mb-1">
+                                Recomendaciones Médicas
+                            </h3>
+                            <p class="text-gray-700">{{ medicamento[6] }}</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <!-- Footer con iconos de información -->
+            <div class="bg-gray-50 px-6 py-4 border-t">
+                <div class="flex items-center justify-between text-sm text-gray-600">
+                    <div class="flex items-center gap-4">
+                        <span class="flex items-center gap-1">
+                            <i class="fas fa-clock text-secondary"></i>
+                            Actualizado
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <i class="fas fa-check-circle text-success"></i>
+                            Verificado
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
+    
     {% else %}
-    <div class="text-center p-8">
-        <p class="text-xl text-gray-600">No se han encontrado medicamentos</p>
+    <!-- Estado vacío mejorado -->
+    <div class="no-data-container">
+        <div class="mb-6">
+            <i class="fas fa-pills text-6xl text-gray-400 pulse-icon"></i>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-600 mb-4">
+            <i class="fas fa-search mr-2"></i>
+            No se encontraron medicamentos
+        </h2>
+        <p class="text-xl text-gray-500 mb-8">
+            <i class="fas fa-info-circle mr-2"></i>
+            Actualmente no hay medicamentos con ese nombre registrados en el sistema
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div class="text-center p-6">
+                <i class="fas fa-plus-circle text-4xl text-secondary mb-4"></i>
+                <h3 class="font-semibold text-gray-700 mb-2">Agregar Medicamentos</h3>
+                <p class="text-gray-500 text-sm">Contáctate con nosotros para que lo registremos</p>
+            </div>
+            <div class="text-center p-6">
+                <i class="fas fa-upload text-4xl text-primary mb-4"></i>
+                <h3 class="font-semibold text-gray-700 mb-2">Cargar medicamento</h3>
+                <p class="text-gray-500 text-sm">Evaluaremos y añadiremos el medicamento a la plataforma</p>
+            </div>
+            <div class="text-center p-6">
+                <i class="fas fa-question-circle text-4xl text-accent mb-4"></i>
+                <h3 class="font-semibold text-gray-700 mb-2">Ayuda</h3>
+                <p class="text-gray-500 text-sm">También puedes consultar por vía WhatsApp</p>
+            </div>
+        </div>
+        
     </div>
-    <br><br><br><br><br><br><br><br><br><br>
     {% endif %}
 </div>
+
 {% endblock %}

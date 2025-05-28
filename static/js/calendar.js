@@ -1,4 +1,4 @@
-       class CalendarApp {
+class CalendarApp {
     constructor() {
         this.currentDate = new Date();
         this.selectedDate = null;
@@ -41,7 +41,7 @@
     async loadAllMedications() {
         try {
             const userId = document.getElementById('id_paciente').value;
-            
+
             const response = await fetch('/get_recordatorios', {
                 method: 'POST',
                 headers: {
@@ -51,12 +51,12 @@
                     paciente_id: userId
                 })
             });
-            
+
             if (response.ok) {
                 const recordatoriosData = await response.json();
                 this.medications = {};
                 this.medicationDays.clear();
-                
+
                 // Manejar el formato de tuplas: [('2025-05-26', '13:00', 'chambas'), ...]
                 if (Array.isArray(recordatoriosData)) {
                     console.log(recordatoriosData)
@@ -70,13 +70,13 @@
                         if (!this.medications[fecha]) {
                             this.medications[fecha] = [];
                         }
-                        
+
                         this.medications[fecha].push({
                             id: id, // Usar índice como ID temporal
                             nombre: nombre,
                             hora: hora
                         });
-                        
+
                         this.medicationDays.add(fecha);
                     });
                 }
@@ -91,20 +91,21 @@
     renderCalendar() {
         const year = this.currentDate.getFullYear();
         const month = this.currentDate.getMonth();
-        
+
         // Actualizar título del mes
         const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
         document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
 
         // Obtener primer día del mes y días en el mes
-        const firstDay = new Date(year, month, 1).getDay();
+        const firstDay = new Date(year, month, 1).getDay(); // 0 = domingo, 1 = lunes, etc.
         const daysInMonth = new Date(year, month + 1, 0).getDate();
-        
         const calendarDays = document.getElementById('calendarDays');
         calendarDays.innerHTML = '';
 
         // Días vacíos al inicio
+        // CORREGIDO: No hay cambio aquí porque firstDay ya devuelve el valor correcto
+        // 0 = domingo (primera columna), 1 = lunes (segunda columna), etc.
         for (let i = 0; i < firstDay; i++) {
             const emptyDay = document.createElement('div');
             emptyDay.className = 'calendar-day empty';
@@ -117,24 +118,21 @@
             const dayElement = document.createElement('div');
             dayElement.className = 'calendar-day';
             dayElement.textContent = day;
-            
+
             // Crear fecha para este día
             const dayDate = new Date(year, month, day);
             const dateKey = this.getDateKey(dayDate);
-            
+
             // Marcar día actual
-            if (year === today.getFullYear() && 
-                month === today.getMonth() && 
+            if (year === today.getFullYear() &&
+                month === today.getMonth() &&
                 day === today.getDate()) {
                 dayElement.classList.add('current-day');
             }
 
-            // EVALUAR SI LA FECHA COINCIDE CON RECORDATORIOS Y APLICAR BORDE ROJO
+            // Evaluar si la fecha coincide con recordatorios y aplicar borde rojo
             if (this.medicationDays.has(dateKey)) {
                 dayElement.classList.add('has-medications');
-                // Aplicar borde rojo cuando hay recordatorios
-                dayElement.style.border = '2px solid red';
-                dayElement.style.borderRadius = '4px';
             }
 
             // Agregar evento click
@@ -146,6 +144,7 @@
         }
     }
 
+
     selectDay(year, month, day) {
         // Remover selección anterior
         document.querySelectorAll('.selected-day').forEach(el => {
@@ -154,30 +153,30 @@
 
         // Marcar día seleccionado
         event.target.classList.add('selected-day');
-        
+
         this.selectedDate = new Date(year, month, day);
-        
+
         // Imprimir la fecha en formato ISO
         const fechaISO = this.getDateKey(this.selectedDate);
         console.log('Fecha seleccionada (ISO):', fechaISO);
-        
+
         this.showDayPanel();
     }
 
     showDayPanel() {
         const panel = document.getElementById('dayPanel');
         const title = document.getElementById('selectedDayTitle');
-        
+
         const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
         const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-        
+            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
         const dayName = dayNames[this.selectedDate.getDay()];
         const day = this.selectedDate.getDate();
         const monthName = monthNames[this.selectedDate.getMonth()];
-        
+
         title.textContent = `${dayName} ${day} de ${monthName}`;
-        
+
         this.loadDayMedications();
         panel.classList.remove('hidden');
         panel.classList.add('show');
@@ -187,22 +186,22 @@
         const panel = document.getElementById('dayPanel');
         panel.classList.remove('show');
         panel.classList.add('hidden');
-        
+
         // Remover selección
         document.querySelectorAll('.selected-day').forEach(el => {
             el.classList.remove('selected-day');
         });
-        
+
         this.selectedDate = null;
     }
 
     loadDayMedications() {
         const dateKey = this.getDateKey(this.selectedDate);
         const medications = this.medications[dateKey] || [];
-        
+
         const medicationsList = document.getElementById('medicationsList');
         medicationsList.innerHTML = '';
-        
+
         if (medications.length === 0) {
             medicationsList.innerHTML = '<p class="text-gray-500 text-sm">No hay medicamentos programados para este día.</p>';
         } else {
@@ -235,14 +234,14 @@
         const user_email = document.getElementById('user_email').value;
         const nombre = nameInput.value.trim();
         const hora = timeInput.value;
-        
+
         if (!nombre || !hora) {
             alert('Por favor, completa todos los campos.');
             return;
         }
-        
+
         const fecha = this.getDateKey(this.selectedDate);
-        
+
         try {
             const response = await fetch('/add_recordatorio', {
                 method: 'POST',
@@ -257,19 +256,19 @@
                     nombre: nombre
                 })
             });
-            
+
             if (response.ok) {
                 // Limpiar formulario
                 nameInput.value = '';
                 timeInput.value = '';
-                
+
                 // RECARGAR TODOS LOS DATOS DEL SERVIDOR
                 await this.loadAllMedications();
-                
+
                 // Actualizar vista
                 this.loadDayMedications();
                 this.renderCalendar();
-                
+
                 alert('Medicamento agregado correctamente.');
             } else {
                 throw new Error('Error al agregar el medicamento');
@@ -280,34 +279,34 @@
         }
     }
 
-   async removeMedication(medicationId) {
+    async removeMedication(medicationId) {
 
-    try {
-        const response = await fetch('/delete_recordatorio_by_id', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id: medicationId })
-        });
-        console.log(medicationId)
-        if (!response.ok) throw new Error('Error al eliminar el medicamento');
+        try {
+            const response = await fetch('/delete_recordatorio_by_id', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id: medicationId })
+            });
+            console.log(medicationId)
+            if (!response.ok) throw new Error('Error al eliminar el medicamento');
 
-        // Carga principal
-        await this.loadAllMedications();
+            // Carga principal
+            await this.loadAllMedications();
 
-        // Cargas secundarias, optimizadas
-        requestAnimationFrame(() => {
-            this.loadDayMedications();
-            this.renderCalendar();
-        });
+            // Cargas secundarias, optimizadas
+            requestAnimationFrame(() => {
+                this.loadDayMedications();
+                this.renderCalendar();
+            });
 
-        alert('Medicamento eliminado correctamente.');
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error al eliminar el medicamento. Por favor, inténtalo de nuevo.');
+            alert('Medicamento eliminado correctamente.');
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al eliminar el medicamento. Por favor, inténtalo de nuevo.');
+        }
     }
-}
 
     getDateKey(date) {
         return date.toISOString().split('T')[0];
@@ -316,3 +315,63 @@
 
 // Inicializar la aplicación
 const calendar = new CalendarApp();
+function openMedicamentoModal() {
+    document.getElementById('medicamentoModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeMedicamentoModal() {
+    document.getElementById('medicamentoModal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+    document.getElementById('medicamentoForm').reset();
+}
+
+async function submitMedicamento(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    const medicamentoData = {
+        nombre: formData.get('nombre'),
+        uso: formData.get('uso'),
+        dosis: formData.get('dosis'),
+        categoria: formData.get('categoria'),
+        efectos_secundarios: formData.get('efectos_secundarios'),
+        recomendaciones_alimenticias: formData.get('recomendaciones_alimenticias')
+    };
+
+    try {
+        const response = await fetch('/api/medicamentos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(medicamentoData)
+        });
+
+        if (response.ok) {
+            closeMedicamentoModal();
+            showSuccessMessage();
+        } else {
+            const error = await response.json();
+            alert('Error al agregar medicamento: ' + error.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión. Por favor, intente nuevamente.');
+    }
+}
+
+function showSuccessMessage() {
+    const successMsg = document.getElementById('successMessage');
+    successMsg.classList.remove('hidden');
+    setTimeout(() => {
+        successMsg.classList.add('hidden');
+    }, 3000);
+}
+
+// Cerrar modal al hacer clic fuera de él
+document.getElementById('medicamentoModal').addEventListener('click', function (event) {
+    if (event.target === this) {
+        closeMedicamentoModal();
+    }
+});

@@ -3,242 +3,292 @@
 {% block title %}Mi cuenta{% endblock %}
 
 {% block extra_css %}
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/calendar.css') }}">
 <style>
-    :root {
-        --primary: #d53d70;
-        --primary-light: #f74f8c;
-        --secondary: #4dbdc1;
-        --secondary-light: #52e2d9;
-        --secondary-lighter: #93efe4;
-    }
-
-    .bg-primary {
-        background-color: var(--primary);
-    }
-
-    .bg-primary-light {
-        background-color: var(--primary-light);
-    }
-
-    .bg-secondary {
-        background-color: var(--secondary);
-    }
-
-    .bg-secondary-light {
-        background-color: var(--secondary-light);
-    }
-
-    .bg-secondary-lighter {
-        background-color: var(--secondary-lighter);
-    }
-
-    .text-primary {
-        color: var(--primary);
-    }
-
-    .text-secondary {
-        color: var(--secondary);
-    }
-
-    .border-primary {
-        border-color: var(--primary);
-    }
-
-    .border-secondary {
-        border-color: var(--secondary);
-    }
-
-    .calendar-day {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.2s;
-        border-radius: 6px;
-        border: 2px solid transparent;
-    }
-
-    .calendar-day:hover:not(.empty):not(.current-day) {
-        background-color: var(--secondary-lighter);
-        color: #333;
-    }
-
-    .current-day {
-        background-color: var(--primary);
-        color: white;
-        border-radius: 50%;
-    }
-
-    .selected-day {
-        background-color: var(--secondary);
-        color: white;
-        border-radius: 50%;
-    }
-
-    /* Nuevo estilo para días con medicamentos */
-    .has-medications {
-        border: 2px solid #dc2626 !important;
-        border-radius: 6px !important;
-    }
-
-    .empty {
-        cursor: default;
-    }
-
-    .calendar-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 2px;
-    }
-
-    .day-panel {
-        transform: translateX(100%);
-        transition: transform 0.3s ease-in-out;
-    }
-
-    .day-panel.show {
-        transform: translateX(0);
-    }
-
-    .medication-item {
-        transition: all 0.2s ease;
-    }
-
-    .medication-item:hover {
-        background-color: #f3f4f6;
-    }
-
-    /* Loading spinner */
-    .loading-spinner {
-        border: 2px solid #f3f3f3;
-        border-top: 2px solid var(--primary);
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
-    }
+    
 </style>
 {% endblock %}
+
 {% block content %}
 <span id="user_id" style="display:none;">{{ userdata.id }}</span>
 <main class="flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-lg w-full max-w-md overflow-hidden">
-<div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <!-- Mensaje de bienvenida -->
-        <div class="px-4 py-6 sm:px-0 mb-8">
-            <div class="bg-gradient-to-r from-cyan-500 to-cyan-400 rounded-lg shadow-md p-6">
-                <h1 class="text-2xl font-bold text-white">Bienvenido/a, {{ userdata.nombre }}</h1>
-                <p class="text-white text-opacity-90 mt-2">
-                    {% if userdata.tipo == 'paciente' %}
-                    Aquí tienes el resumen de tus medicamentos y horarios
-                    {% elif userdata.tipo == 'cuidador' %}
-                    Aquí puedes ver los medicamentos de tus pacientes
-                    {% elif userdata.tipo == 'profesional' %}
-                    Panel para gestionar medicamentos y pacientes
-                    {% endif %}
-                </p>
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-6xl overflow-hidden">
+        <!-- Header con diseño mejorado -->
+        <div class="header-container relative">
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-user-circle text-6xl text-white opacity-90"></i>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+                        <i class="fas fa-id-card-alt mr-3"></i>
+                        Mi Cuenta
+                    </h1>
+                    <p class="text-xl text-white opacity-90">
+                        {% if userdata.tipo == 'paciente' %}
+                        <i class="fas fa-pills mr-2"></i>Resumen de medicamentos y horarios
+                        {% elif userdata.tipo == 'cuidador' %}
+                        <i class="fas fa-users mr-2"></i>Gestión de pacientes
+                        {% elif userdata.tipo == 'profesional' %}
+                        <i class="fas fa-user-md mr-2"></i>Panel profesional
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Iconos flotantes decorativos -->
+            <div class="floating-icon top-10 left-10">
+                <i class="fas fa-heartbeat text-3xl text-white opacity-20"></i>
+            </div>
+            <div class="floating-icon top-20 right-20" style="animation-delay: 1s;">
+                <i class="fas fa-calendar-alt text-2xl text-white opacity-20"></i>
+            </div>
+            <div class="floating-icon bottom-10 left-20" style="animation-delay: 2s;">
+                <i class="fas fa-clock text-2xl text-white opacity-20"></i>
             </div>
         </div>
 
-        <!-- Información del usuario -->
-        <div class="px-4 sm:px-0 mb-8">
-            <div class="bg-white shadow rounded-lg overflow-hidden">
-                <div class="px-4 py-5 sm:p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-lg font-medium text-gray-900">Información de perfil</h2>
-                        <!-- Botón especial solo para profesionales -->
-                        
+        <div class="container mx-auto px-4 py-8">
+            <!-- Información del usuario -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <!-- Tarjeta de perfil -->
+                <div
+                    class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover-shadow transition-all duration-300 card-hover">
+                    <div class="bg-primary p-6 relative">
+                        <div class="flex items-center justify-between">
+                            <div class="icon-bg">
+                                <i class="fas fa-user text-2xl text-white"></i>
+                            </div>
+                            <div class="category-badge">
+                                <i class="fas fa-tag"></i>
+                                {{ userdata.tipo|capitalize }}
+                            </div>
+                        </div>
+                        <h2 class="text-2xl font-bold text-white mt-4 mb-2">
+                            <i class="fas fa-id-card mr-2"></i>
+                            {{ userdata.nombre }}
+                        </h2>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
-                        <div class="space-y-1">
-                            <p class="text-sm font-medium text-gray-500">Nombre</p>
-                            <p class="text-sm text-gray-900">{{ userdata.nombre }}</p>
+
+                    <div class="p-6">
+                        <div class="info-item">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-envelope text-xl text-secondary mt-1"></i>
+                                <div>
+                                    <h3 class="font-semibold text-primary mb-1">Email</h3>
+                                    <p class="text-gray-700">{{ userdata.email }}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="space-y-1">
-                            <p class="text-sm font-medium text-gray-500">Email</p>
-                            <p class="text-sm text-gray-900">{{ userdata.email }}</p>
+
+                        <div class="info-item">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-phone-alt text-xl text-accent mt-1"></i>
+                                <div>
+                                    <h3 class="font-semibold text-primary mb-1">Teléfono</h3>
+                                    <p class="text-gray-700">{{ userdata.telefono }}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="space-y-1">
-                            <p class="text-sm font-medium text-gray-500">Teléfono</p>
-                            <p class="text-sm text-gray-900">{{ userdata.telefono }}</p>
+
+                        <div class="info-item">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-user-tag text-xl text-warning mt-1"></i>
+                                <div>
+                                    <h3 class="font-semibold text-primary mb-1">Tipo de usuario</h3>
+                                    <p class="text-gray-700">{{ userdata.tipo|capitalize }}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="space-y-1">
-                            <p class="text-sm font-medium text-gray-500">Tipo de usuario</p>
-                            <p class="text-sm text-gray-900">{{ userdata.tipo|capitalize }}</p>
+
+                        {% if userdata.tipo == 'profesional' %}
+                        <div class="mt-6 text-center">
+                            <button onclick="openMedicamentoModal()"
+                                class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 px-6 rounded-xl transition duration-200 ease-in-out transform hover:scale-105 shadow-lg flex items-center justify-center">
+                                <i class="fas fa-plus-circle mr-2"></i>
+                                Agregar Medicamento
+                            </button>
                         </div>
-                    </div>
-                    <br><br>
-                    {% if userdata.tipo == 'profesional' %}
-                        <button onclick="openMedicamentoModal()" 
-                                class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 shadow-lg">
-                            Agregar Medicamento
-                        </button>
                         {% endif %}
+                    </div>
+                </div>
+
+                <!-- Sección de recordatorios -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+                        <div class="bg-secondary p-6">
+                            <h2 class="text-2xl font-bold text-white">
+                                <i class="fas fa-bell mr-2"></i>
+                                Recordatorios de Medicamentos
+                            </h2>
+                        </div>
+
+                        <div class="p-6">
+                            {% if userdata.recordatorios %}
+                            <div class="space-y-4">
+                                {% for recordatorio in userdata.recordatorios %}
+                                <div class="reminder-card bg-white rounded-lg p-4 border border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-3 mb-2">
+                                                <i class="fas fa-pills text-xl text-primary"></i>
+                                                <h3 class="text-lg font-medium text-gray-900">
+                                                    {{ recordatorio.Recordatorio }}
+                                                </h3>
+                                            </div>
+                                            <div class="flex flex-wrap gap-4">
+                                                <div class="flex items-center text-sm text-gray-600">
+                                                    <i class="fas fa-calendar-day text-primary mr-2"></i>
+                                                    {{ recordatorio.Día }}
+                                                </div>
+                                                <div class="flex items-center text-sm text-gray-600">
+                                                    <i class="fas fa-clock text-primary mr-2"></i>
+                                                    {{ recordatorio['Hora del día'] }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <span
+                                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium badge-active">
+                                                <i class="fas fa-check-circle mr-1"></i>
+                                                Activo
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="text-center py-8">
+                                <div class="mb-6">
+                                    <i class="fas fa-bell-slash text-5xl text-gray-400 pulse-icon"></i>
+                                </div>
+                                <h3 class="text-xl font-medium text-gray-900 mb-2">
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    No hay recordatorios registrados
+                                </h3>
+                                <p class="text-gray-500">
+                                    {% if userdata.tipo == 'paciente' %}
+                                    No tienes recordatorios de medicamentos activos.
+                                    {% else %}
+                                    No hay recordatorios para mostrar.
+                                    {% endif %}
+                                </p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección del Calendario -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 mb-8">
+                <div class="bg-gradient-main p-6">
+                    <h2 class="text-2xl font-bold text-white">
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        Calendario de Medicamentos
+                    </h2>
+                </div>
+
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center space-x-4">
+                            <button id="prevMonth" class="p-2 rounded-full hover:bg-gray-100 text-gray-700">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <h3 id="currentMonth" class="text-lg font-medium text-gray-700"></h3>
+                            <button id="nextMonth" class="p-2 rounded-full hover:bg-gray-100 text-gray-700">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="flex items-center text-sm text-gray-600">
+                                <span class="w-3 h-3 rounded-full bg-primary mr-1"></span>
+                                Hoy
+                            </span>
+                            <span class="flex items-center text-sm text-gray-600">
+                                <span class="w-3 h-3 rounded-full bg-secondary mr-1"></span>
+                                Seleccionado
+                            </span>
+                            <span class="flex items-center text-sm text-gray-600">
+                                <span class="w-3 h-3 rounded-full border-2 border-red-500 mr-1"></span>
+                                Medicamentos
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Días de la semana -->
+                    <div class="calendar-grid">
+                        <div class="weekday-header"><i class="fas fa-sun"></i> Dom</div>
+                        <div class="weekday-header"><i class="fas fa-briefcase"></i> Lun</div>
+                        <div class="weekday-header"><i class="fas fa-coffee"></i> Mar</div>
+                        <div class="weekday-header"><i class="fas fa-chart-line"></i> Mié</div>
+                        <div class="weekday-header"><i class="fas fa-star"></i> Jue</div>
+                        <div class="weekday-header"><i class="fas fa-heart"></i> Vie</div>
+                        <div class="weekday-header"><i class="fas fa-bed"></i> Sáb</div>
+                    </div>
+                    <!-- Días del calendario -->
+                    <div id="calendarDays" class="calendar-grid"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal para agregar medicamento -->
-    <div id="medicamentoModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+    <div id="medicamentoModal"
+        class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-xl bg-white">
             <div class="mt-3">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-bold text-gray-900">Agregar Nuevo Medicamento</h3>
+                    <h3 class="text-2xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-pills mr-3 text-primary"></i>
+                        Agregar Nuevo Medicamento
+                    </h3>
                     <button onclick="closeMedicamentoModal()" class="text-gray-400 hover:text-gray-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
+                        <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
-                
+
                 <form id="medicamentoForm" onsubmit="submitMedicamento(event)">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="col-span-2">
-                            <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1">
+                            <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                                <i class="fas fa-tag text-primary mr-2"></i>
                                 Nombre del Medicamento *
                             </label>
                             <input type="text" id="nombre" name="nombre" required
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent">
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent">
                         </div>
-                        
+
                         <div class="col-span-2">
-                            <label for="uso" class="block text-sm font-medium text-gray-700 mb-1">
+                            <label for="uso" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                                <i class="fas fa-info-circle text-primary mr-2"></i>
                                 Uso/Indicación *
                             </label>
                             <textarea id="uso" name="uso" rows="3" required
-                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                                      placeholder="Para qué se utiliza este medicamento..."></textarea>
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                                placeholder="Para qué se utiliza este medicamento..."></textarea>
                         </div>
-                        
+
                         <div>
-                            <label for="dosis" class="block text-sm font-medium text-gray-700 mb-1">
+                            <label for="dosis" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                                <i class="fas fa-prescription-bottle-alt text-primary mr-2"></i>
                                 Dosis *
                             </label>
                             <input type="text" id="dosis" name="dosis" required
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                                   placeholder="ej: 500mg cada 8 horas">
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                                placeholder="ej: 500mg cada 8 horas">
                         </div>
-                        
+
                         <div>
-                            <label for="categoria" class="block text-sm font-medium text-gray-700 mb-1">
+                            <label for="categoria"
+                                class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                                <i class="fas fa-list-alt text-primary mr-2"></i>
                                 Categoría *
                             </label>
                             <select id="categoria" name="categoria" required
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent">
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent">
                                 <option value="">Seleccione una categoría</option>
                                 <option value="Analgésico">Analgésico</option>
                                 <option value="Antibiótico">Antibiótico</option>
@@ -252,33 +302,39 @@
                                 <option value="Otro">Otro</option>
                             </select>
                         </div>
-                        
+
                         <div class="col-span-2">
-                            <label for="efectos_secundarios" class="block text-sm font-medium text-gray-700 mb-1">
+                            <label for="efectos_secundarios"
+                                class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                                <i class="fas fa-exclamation-triangle text-primary mr-2"></i>
                                 Efectos Secundarios
                             </label>
                             <textarea id="efectos_secundarios" name="efectos_secundarios" rows="3"
-                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                                      placeholder="Posibles efectos secundarios..."></textarea>
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                                placeholder="Posibles efectos secundarios..."></textarea>
                         </div>
-                        
+
                         <div class="col-span-2">
-                            <label for="recomendaciones_alimenticias" class="block text-sm font-medium text-gray-700 mb-1">
+                            <label for="recomendaciones_alimenticias"
+                                class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                                <i class="fas fa-utensils text-primary mr-2"></i>
                                 Recomendaciones Alimenticias
                             </label>
                             <textarea id="recomendaciones_alimenticias" name="recomendaciones_alimenticias" rows="3"
-                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                                      placeholder="Tomar con comida, evitar alcohol, etc..."></textarea>
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                                placeholder="Tomar con comida, evitar alcohol, etc..."></textarea>
                         </div>
                     </div>
-                    
+
                     <div class="flex justify-end space-x-3 mt-6">
                         <button type="button" onclick="closeMedicamentoModal()"
-                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200">
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200 flex items-center">
+                            <i class="fas fa-times mr-2"></i>
                             Cancelar
                         </button>
                         <button type="submit"
-                                class="px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition duration-200">
+                            class="px-4 py-2 bg-gradient-to-r from-cyan-600 to-cyan-500 text-white rounded-md hover:from-cyan-700 hover:to-cyan-600 transition duration-200 flex items-center">
+                            <i class="fas fa-save mr-2"></i>
                             Guardar Medicamento
                         </button>
                     </div>
@@ -287,224 +343,75 @@
         </div>
     </div>
 
+    <!-- Panel de día seleccionado -->
+    <div id="dayPanel"
+        class="day-panel w-80 bg-white shadow-lg rounded-lg p-6 fixed right-4 top-4 bottom-4 overflow-y-auto hidden">
+        <div class="flex items-center justify-between mb-4">
+            <h3 id="selectedDayTitle" class="text-xl font-semibold text-gray-800 flex items-center">
+                <i class="fas fa-calendar-day text-primary mr-2"></i>
+                <span id="dayTitleText"></span>
+            </h3>
+            <button id="closePanelBtn" class="p-2 rounded-full hover:bg-gray-100">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <hr class="mb-4">
+
+        <div class="mb-6">
+            <h4 class="text-lg font-medium text-gray-700 mb-3 flex items-center">
+                <i class="fas fa-pills text-secondary mr-2"></i>
+                Medicamentos del día:
+            </h4>
+            <div id="medicationsList" class="space-y-2 mb-4">
+                <div class="flex justify-center items-center py-4">
+                    <div class="loading-spinner"></div>
+                    <span class="ml-2 text-gray-500">Cargando...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario para agregar medicamento -->
+        <div class="border-t pt-4">
+            <h4 class="text-lg font-medium text-gray-700 mb-3 flex items-center">
+                <i class="fas fa-plus-circle text-primary mr-2"></i>
+                Agregar medicamento
+            </h4>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                        <i class="fas fa-capsules text-primary mr-2"></i>
+                        Nombre del medicamento
+                    </label>
+                    <input type="text" id="medicationName"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Ej: Paracetamol">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                        <i class="fas fa-clock text-primary mr-2"></i>
+                        Hora
+                    </label>
+                    <input type="time" id="medicationTime"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <input type="hidden" name="id_paciente" value="{{ userdata.id }}" id="id_paciente">
+                <input type="hidden" name="email" value="{{ userdata.email }}" id="user_email">
+                <button id="addMedicationBtn"
+                    class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center">
+                    <i class="fas fa-plus-circle mr-2"></i>
+                    Agregar medicamento
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Mensaje de éxito -->
-    <div id="successMessage" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50">
-        <div class="flex items-center">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-            </svg>
-            Medicamento agregado exitosamente
-        </div>
+    <div id="successMessage"
+        class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50 flex items-center">
+        <i class="fas fa-check-circle mr-2"></i>
+        Medicamento agregado exitosamente
     </div>
-
-    <script>
-        function openMedicamentoModal() {
-            document.getElementById('medicamentoModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeMedicamentoModal() {
-            document.getElementById('medicamentoModal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
-            document.getElementById('medicamentoForm').reset();
-        }
-
-        async function submitMedicamento(event) {
-            event.preventDefault();
-            
-            const formData = new FormData(event.target);
-            const medicamentoData = {
-                nombre: formData.get('nombre'),
-                uso: formData.get('uso'),
-                dosis: formData.get('dosis'),
-                categoria: formData.get('categoria'),
-                efectos_secundarios: formData.get('efectos_secundarios'),
-                recomendaciones_alimenticias: formData.get('recomendaciones_alimenticias')
-            };
-
-            try {
-                const response = await fetch('/api/medicamentos', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(medicamentoData)
-                });
-
-                if (response.ok) {
-                    closeMedicamentoModal();
-                    showSuccessMessage();
-                } else {
-                    const error = await response.json();
-                    alert('Error al agregar medicamento: ' + error.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error de conexión. Por favor, intente nuevamente.');
-            }
-        }
-
-        function showSuccessMessage() {
-            const successMsg = document.getElementById('successMessage');
-            successMsg.classList.remove('hidden');
-            setTimeout(() => {
-                successMsg.classList.add('hidden');
-            }, 3000);
-        }
-
-        // Cerrar modal al hacer clic fuera de él
-        document.getElementById('medicamentoModal').addEventListener('click', function(event) {
-            if (event.target === this) {
-                closeMedicamentoModal();
-            }
-        });
-    </script>
-        <div class="px-4 sm:px-0 mb-8">
-    <div class="bg-white shadow rounded-lg overflow-hidden">
-        <div class="px-4 py-5 sm:p-6">
-            <h2 class="text-lg font-medium text-gray-900 mb-4">Medicamentos Registrados</h2>
-            {% if userdata.recordatorios %}
-                <div class="space-y-3">
-                    {% for recordatorio in userdata.recordatorios %}
-                        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center justify-between">
-                                <div class="flex-1">
-                                    <h3 class="text-base font-medium text-gray-900">
-                                        {{ recordatorio.Recordatorio }}
-                                    </h3>
-                                    <div class="mt-2 flex flex-col sm:flex-row sm:space-x-4 space-y-1 sm:space-y-0">
-                                        <div class="flex items-center text-sm text-gray-500">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                            </svg>
-                                            {{ recordatorio.Día }}
-                                        </div>
-                                        <div class="flex items-center text-sm text-gray-500">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
-                                            {{ recordatorio['Hora del día'] }}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="ml-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        Activo
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="text-center py-8">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    <h3 class="mt-2 text-sm font-medium text-gray-900">No hay medicamentos registrados</h3>
-                    <p class="mt-1 text-sm text-gray-500">Comienza agregando tu primer recordatorio de medicamento.</p>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-</div>
-        <!-- Sección del Calendario -->
-        <div class="flex gap-6">
-            <!-- Calendario -->
-            <div class="flex-1">
-                <div class="bg-white shadow rounded-lg p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-semibold text-gray-800">Calendario de Medicamentos</h2>
-                        <div class="flex items-center space-x-4">
-                            <button id="prevMonth" class="p-2 rounded-full hover:bg-gray-100">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 19l-7-7 7-7"></path>
-                                </svg>
-                            </button>
-                            <h3 id="currentMonth" class="text-lg font-medium text-gray-700"></h3>
-                            <button id="nextMonth" class="p-2 rounded-full hover:bg-gray-100">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 5l7 7-7 7"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Días de la semana -->
-                    <div class="calendar-grid mb-2">
-                        <div class="text-center text-sm font-medium text-gray-500 py-2">Dom</div>
-                        <div class="text-center text-sm font-medium text-gray-500 py-2">Lun</div>
-                        <div class="text-center text-sm font-medium text-gray-500 py-2">Mar</div>
-                        <div class="text-center text-sm font-medium text-gray-500 py-2">Mié</div>
-                        <div class="text-center text-sm font-medium text-gray-500 py-2">Jue</div>
-                        <div class="text-center text-sm font-medium text-gray-500 py-2">Vie</div>
-                        <div class="text-center text-sm font-medium text-gray-500 py-2">Sáb</div>
-                    </div>
-
-                    <!-- Días del calendario -->
-                    <div id="calendarDays" class="calendar-grid"></div>
-                </div>
-            </div>
-
-            <!-- Panel de día seleccionado -->
-            <div id="dayPanel"
-                class="day-panel w-80 bg-white shadow-lg rounded-lg p-6 fixed right-4 top-4 bottom-4 overflow-y-auto hidden">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 id="selectedDayTitle" class="text-xl font-semibold text-gray-800"></h3>
-                    <button id="closePanelBtn" class="p-2 rounded-full hover:bg-gray-100">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-
-                <hr class="mb-4">
-
-                <div class="mb-6">
-                    <h4 class="text-lg font-medium text-gray-700 mb-3">Medicamentos del día:</h4>
-                    <div id="medicationsList" class="space-y-2 mb-4">
-                        <div class="flex justify-center items-center py-4">
-                            <div class="loading-spinner"></div>
-                            <span class="ml-2 text-gray-500">Cargando...</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Formulario para agregar medicamento -->
-                <div class="border-t pt-4">
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre del medicamento</label>
-                            <input type="text" id="medicationName"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Ej: Paracetamol">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Hora</label>
-                            <input type="time" id="medicationTime"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <input type="hidden" name="id_paciente" value="{{ userdata.id }}" id="id_paciente">
-                        <input type="hidden" name="email" value="{{ userdata.email }}" id="user_email">
-                        <button id="addMedicationBtn"
-                            class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            Agregar medicamento
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </main>
 
 <script src="{{ url_for('static', filename='js/calendar.js') }}"></script>

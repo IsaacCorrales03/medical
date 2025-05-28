@@ -1,193 +1,267 @@
-/* Estilos para el calendario */
-.calendar-day {
-    height: 40px;
-    position: relative;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-    overflow: visible;
+:root {
+    --primary: #d53d70;
+    --primary-light: #f74f8c;
+    --primary-dark: #b8335c;
+    --secondary: #4dbdc1;
+    --secondary-light: #52e2d9;
+    --secondary-lighter: #93efe4;
+    --secondary-dark: #3da8ac;
+    --accent: #f39c12;
+    --accent-light: #f4d03f;
+    --success: #27ae60;
+    --warning: #e74c3c;
+    --info: #3498db;
+    --dark: #2c3e50;
+    --light: #ecf0f1;
 }
 
-.calendar-day:hover {
-    background-color: #f3f4f6;
+.bg-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
 }
 
-.calendar-day.empty {
-    background-color: transparent;
+.bg-primary-solid {
+    background-color: var(--primary);
 }
 
-.calendar-day.current-day {
-    background-color: #e0f2fe;
-    font-weight: bold;
+.bg-secondary {
+    background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
 }
 
-.calendar-day.has-medications {
-    position: relative;
+.bg-secondary-solid {
+    background-color: var(--secondary);
 }
 
-/* Indicador de medicamento */
-.medication-indicator {
-    position: absolute;
-    bottom: 2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 6px;
-    height: 6px;
-    background-color: #ef4444;
+.bg-accent {
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+}
+
+.bg-gradient-main {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.text-primary {
+    color: var(--primary);
+}
+
+.text-secondary {
+    color: var(--secondary);
+}
+
+.text-accent {
+    color: var(--accent);
+}
+
+.border-primary {
+    border-color: var(--primary);
+}
+
+.border-secondary {
+    border-color: var(--secondary);
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+}
+
+.card-hover:hover {
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+}
+
+.icon-bg {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
     border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-#medicationModal {
-    z-index: 1000;
+
+.category-badge {
+    background: linear-gradient(45deg, var(--accent), var(--accent-light));
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
-/* Tooltip para mostrar medicamentos */
-.medication-tooltip {
+
+.info-item {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--secondary);
+    transition: all 0.3s ease;
+}
+
+.info-item:hover {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header-container {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    padding: 60px 0 40px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.header-container::before {
+    content: '';
     position: absolute;
-    z-index: 1;
-    background-color: white;
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    padding: 8px;
-    width: 200px;
-    text-align: left;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-bottom: 8px;
-    display: none;
-    white-space: normal;
-}
-
-.calendar-day.has-medications:hover .medication-tooltip {
-    display: block;
-}
-
-/* Estilos para el modal */
-.modal-backdrop {
-    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+}
+
+.floating-icon {
+    position: absolute;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.no-data-container {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 20px;
+    padding: 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.pulse-icon {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Estilos específicos para el calendario */
+.calendar-day {
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 40;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 6px;
+    border: 2px solid transparent;
 }
 
-.modal-content {
-    background-color: white;
-    border-radius: 8px;
-    padding: 16px;
-    width: 100%;
-    max-width: 500px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.calendar-day:hover:not(.empty):not(.current-day) {
+    background-color: var(--secondary-lighter);
+    color: #333;
 }
-/* Estilos adicionales para el calendario de medicamentos */
 
-/* Asegurarse de que el contenedor de días tenga un buen espaciado */
-#calendarDays {
+.current-day {
+    background-color: var(--primary);
+    color: white;
+    border-radius: 50%;
+}
+
+.selected-day {
+    background-color: var(--secondary);
+    color: white;
+    border-radius: 50%;
+}
+
+.has-medications {
+    border: 2px solid #dc2626 !important;
+    border-radius: 6px !important;
+}
+
+.empty {
+    cursor: default;
+}
+
+.calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
+    gap: 2px;
 }
 
-/* Estilo para los días del calendario */
-.calendar-day {
-    min-height: 40px;
-    position: relative;
-    border-radius: 4px;
-    overflow: visible;
+.day-panel {
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
 }
 
-/* Estilo para los días con medicamentos */
-.has-medications {
+.day-panel.show {
+    transform: translateX(0);
+}
+
+.medication-item {
     transition: all 0.2s ease;
 }
 
-.has-medications:hover {
+.medication-item:hover {
     background-color: #f3f4f6;
-    transform: scale(1.05);
-    z-index: 5;
 }
 
-/* Estilos para el tooltip */
-.medication-tooltip {
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    opacity: 0;
-    visibility: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e5e7eb;
+/* Loading spinner */
+.loading-spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid var(--primary);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
 }
 
-.has-medications:hover .medication-tooltip {
-    opacity: 1;
-    visibility: visible;
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
-/* Estilo para el indicador de medicamento */
-.medication-indicator {
-    transition: transform 0.2s ease;
+/* Estilos para cards de recordatorios */
+.reminder-card {
+    border-left: 4px solid var(--primary);
+    transition: all 0.3s ease;
 }
 
-.has-medications:hover .medication-indicator {
-    transform: translate(-50%, 0) scale(1.2);
+.reminder-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Estilo para días vacíos */
-.calendar-day.empty {
-    background-color: #f9fafb;
+.badge-active {
+    background-color: var(--success);
 }
-.border-t.border-gray-200.p-6 {
-    overflow: visible;
-  }
-  
-  /* Calendar grid container needs to be overflow visible */
-  #calendarDays {
-    overflow: visible;
-    position: relative;
-  }
-  
-  /* Individual day cells need position relative to anchor tooltips */
-  .calendar-day {
-    position: relative;
-    overflow: visible;
-  }
-  
-  /* Tooltip styling with improved positioning */
-  .medication-tooltip {
-    position: absolute;
-    z-index: 50;
-    background-color: white;
-    border-radius: 0.375rem;
-    padding: 0.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 12rem;
-    text-align: left;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.15s ease;
-    /* Position tooltip with more reliable method */
-    bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
-    /* Ensure tooltip isn't cutoff */
-    white-space: normal;
-    word-break: break-word;
-  }
-  
-  /* Add a small arrow at the bottom of tooltip */
-  .medication-tooltip::after {
-    content: "";
-    position: absolute;
-    bottom: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 5px 5px 0;
-    border-style: solid;
-    border-color: white transparent transparent transparent;
-  }
-  
-  /* Make tooltip visible when needed */
-  .medication-tooltip.visible {
-    opacity: 1;
-  }
+
+.badge-inactive {
+    background-color: var(--warning);
+}
