@@ -362,13 +362,13 @@
 </div>
 
 <!-- Botón de ayuda mejorado -->
-<a href="#" class="help-button fixed bottom-6 right-6 text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 z-50 group"
+<button class="help-button fixed bottom-6 right-6 text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 z-50 group"
    style="background: linear-gradient(to right, #3b82f6, #2563eb);">
     <div class="flex items-center gap-2">
         <i class="fas fa-question-circle text-2xl group-hover:rotate-12 transition-transform duration-300"></i>
         <span class="hidden md:inline font-medium">Ayuda</span>
     </div>
-</a>
+</button>
 
 <!-- Modal de ayuda mejorado -->
 <div id="helpModal" class="modal flex items-center justify-center fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50" style="display: none;">
@@ -417,4 +417,90 @@
         </div>
     </div>
 </div>
+<script>
+    // JavaScript para controlar el modal de ayuda
+document.addEventListener('DOMContentLoaded', function() {
+    const helpButton = document.querySelector('.help-button');
+    const helpModal = document.getElementById('helpModal');
+    const closeModalBtn = document.getElementById('closeModal');
+    const modalContent = document.querySelector('.modal-content');
+
+    // Función para abrir el modal
+    function openModal() {
+        helpModal.style.display = 'flex';
+        // Pequeño delay para la animación
+        setTimeout(() => {
+            helpModal.classList.add('modal-open');
+            modalContent.style.transform = 'scale(1)';
+        }, 10);
+    }
+
+    // Función para cerrar el modal
+    function closeModal() {
+        modalContent.style.transform = 'scale(0.95)';
+        helpModal.classList.remove('modal-open');
+        setTimeout(() => {
+            helpModal.style.display = 'none';
+        }, 300);
+    }
+
+    // Event listeners
+    helpButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        openModal();
+    });
+
+    closeModalBtn.addEventListener('click', closeModal);
+
+    // Cerrar modal al hacer clic fuera del contenido
+    helpModal.addEventListener('click', function(e) {
+        if (e.target === helpModal) {
+            closeModal();
+        }
+    });
+
+    // Cerrar modal con la tecla Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && helpModal.style.display === 'flex') {
+            closeModal();
+        }
+    });
+});
+
+// CSS adicional para las animaciones (agregar al CSS existente)
+const additionalCSS = `
+.modal {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.modal-open {
+    opacity: 1;
+}
+
+.modal-content {
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.help-button:active {
+    transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        margin: 1rem;
+        max-width: calc(100% - 2rem);
+    }
+}
+`;
+
+// Aplicar CSS adicional si no existe
+if (!document.querySelector('#modal-styles')) {
+    const styleSheet = document.createElement('style');
+    styleSheet.id = 'modal-styles';
+    styleSheet.textContent = additionalCSS;
+    document.head.appendChild(styleSheet);
+}
+</script>
 {% endblock %}

@@ -1,231 +1,698 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <title>{% block title %} {% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/template.css') }}">
-    {% block extra_css %}{% endblock %}
-</head>
-
-<body>
-    <!-- Navbar -->
-    <nav class="bg-white shadow-md" x-data="{ open: false }">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex">
-                    <div class="flex-shrink-0 flex items-center" style="cursor:pointer;"onclick="window.location.href='{{ url_for('index') }}'">
-                        <svg class="h-8 w-auto text-primary" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M19 3h-4.18C14.25 1.28 12.77 0 11 0S7.75 1.28 7.18 3H3C1.9 3 1 3.9 1 5v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8 0c.83 0 1.5.67 1.5 1.5S11.83 6 11 6s-1.5-.67-1.5-1.5S10.17 3 11 3zm7 18H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h2v1c0 1.1.9 2 2 2h2c1.1 0 2-.9 2-2V5h2c.55 0 1 .45 1 1v14c0 .55-.45 1-1 1z" />
-                        </svg>
-                        <span class="ml-2 text-2xl font-bold text-gray-800">Medi<span
-                                class="text-primary">Time</span></span>
-                    </div>
-                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                        <a href="{{ url_for('index') }}"
-                            class="border-primary text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                            Inicio
-                        </a>
-                        <a href="#"
-                            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                            Medicamentos
-                        </a>
-                        <a href="#"
-                            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                            Blog
-                        </a>
-                    </div>
-                </div>
-                <div class="hidden sm:ml-6 sm:flex sm:items-center">
-                    <a href="{{ url_for('register') }}"
-                        class="bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-md border border-gray-300 transition duration-150 ease-in-out">
-                        Registrarse
-                    </a>
-                    <a href="{{ url_for('login') }}"
-                        class="ml-3 bg-primary hover:bg-primary-light px-4 py-2 text-sm font-medium text-white rounded-md shadow-sm transition duration-150 ease-in-out">
-                        Iniciar sesión
-                    </a>
-                </div>
-                <div class="-mr-2 flex items-center sm:hidden">
-                    <button @click="open = !open"
-                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-secondary">
-                        <span class="sr-only">Abrir menú</span>
-                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 6h16M4 12h16M4 18h16" x-show="!open"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12" x-show="open"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Menú móvil -->
-        <div x-show="open" class="sm:hidden">
-            <div class="pt-2 pb-3 space-y-1">
-                <a href="{{ url_for('index') }}"
-                    class="bg-gray-50 border-primary text-primary block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                    Inicio
-                </a>
-                <a href="#"
-                    class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                    Medicamentos
-                </a>
-                <a href="#"
-                    class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                    Blog
-                </a>
-            </div>
-            <div class="pt-4 pb-3 border-t border-gray-200">
-                <div class="flex items-center px-4">
-                    <div class="flex-shrink-0">
-                        <button
-                            class="bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-md border border-gray-300 w-full mb-2">
-                            Registrarse
-                        </button>
-                        <button style="background-color: var(--primary);"
-                            class="bg-primary hover:bg-primary-light px-4 py-2 text-sm font-medium text-white rounded-md shadow-sm w-full">
-                            Iniciar sesión
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
+{% extends 'template.html' %}
+{% block title %}Iniciar Sesión - MediTime{% endblock %}
+{% block extra_css %}
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+    :root {
+        --primary: #06b6d4;
+        --secondary: #8b5cf6;
+        --success: #10b981;
+        --info: #3b82f6;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+    }
 
-.animate-fadeIn {
-    animation: fadeIn 0.5s ease-out forwards;
-}
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.08);
+        }
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-12px);
+        }
+    }
+
+    @keyframes bounce-gentle {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-6px);
+        }
+    }
+
+    @keyframes rotate {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .animate-fadeIn {
+        animation: fadeIn 1s ease-out forwards;
+    }
+
+    .animate-slideInLeft {
+        animation: slideInLeft 0.8s ease-out forwards;
+    }
+
+    .animate-slideInRight {
+        animation: slideInRight 0.8s ease-out forwards;
+    }
+
+    .pulse-icon {
+        animation: pulse 2.5s infinite;
+    }
+
+    .float-icon {
+        animation: float 3.5s ease-in-out infinite;
+    }
+
+    .bounce-gentle {
+        animation: bounce-gentle 2.5s infinite;
+    }
+
+    .rotate-slow {
+        animation: rotate 20s linear infinite;
+    }
+
+    .header-container {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 60%, #ec4899 100%);
+        position: relative;
+        overflow: hidden;
+        min-height: 60vh;
+    }
+
+    .header-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M 12 0 L 0 0 0 12" fill="none" stroke="white" stroke-width="0.8" opacity="0.15"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    }
+
+    .header-container::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 100px;
+        background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.1) 100%);
+    }
+
+    .floating-icon {
+        position: absolute;
+        animation: float 4s ease-in-out infinite;
+        opacity: 0.7;
+        z-index: 1;
+        transition: all 0.3s ease;
+    }
+
+    .floating-icon:hover {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+
+    .icon-bg {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+        backdrop-filter: blur(15px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.4s ease;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .icon-bg:hover {
+        transform: scale(1.15);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.25));
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(25px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    }
+
+    .input-group {
+        position: relative;
+        transition: all 0.4s ease;
+    }
+
+    .input-group:hover {
+        transform: translateY(-3px);
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary);
+        font-size: 20px;
+        z-index: 10;
+        transition: all 0.4s ease;
+    }
+
+    .form-input {
+        padding: 20px 20px 20px 60px;
+        border: 2px solid #e5e7eb;
+        border-radius: 16px;
+        width: 100%;
+        font-size: 16px;
+        transition: all 0.4s ease;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 6px rgba(6, 182, 212, 0.15), 0 8px 30px rgba(6, 182, 212, 0.1);
+        background: white;
+        transform: translateY(-2px);
+    }
+
+    .form-input:focus+.input-icon {
+        color: var(--primary);
+        transform: translateY(-50%) scale(1.15);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border: none;
+        padding: 20px 40px;
+        border-radius: 16px;
+        color: white;
+        font-weight: 700;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3);
+    }
+
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.6s ease;
+    }
+
+    .btn-primary:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(6, 182, 212, 0.4);
+    }
+
+    .btn-primary:active {
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+        border: 2px solid var(--primary);
+        padding: 16px 32px;
+        border-radius: 12px;
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.3);
+    }
+
+    .decorative-elements {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .floating-shape {
+        position: absolute;
+        opacity: 0.12;
+        animation: float 8s ease-in-out infinite;
+    }
+
+    .shape-1 {
+        top: 15%;
+        left: 8%;
+        animation-delay: 0s;
+    }
+
+    .shape-2 {
+        top: 25%;
+        right: 12%;
+        animation-delay: 3s;
+    }
+
+    .shape-3 {
+        bottom: 25%;
+        left: 12%;
+        animation-delay: 6s;
+    }
+
+    .shape-4 {
+        bottom: 15%;
+        right: 8%;
+        animation-delay: 1.5s;
+    }
+
+    .welcome-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        animation-delay: 0.3s;
+    }
+
+    .feature-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .social-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .social-icon:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    @media (max-width: 768px) {
+        .header-container h1 {
+            font-size: 2.5rem;
+        }
+
+        .floating-icon {
+            display: none;
+        }
+
+        .form-container {
+            margin-top: -60px;
+        }
+
+        .welcome-card {
+            padding: 20px;
+        }
+    }
 </style>
+{% endblock %}
 
-<main class="min-h-screen flex items-center justify-center px-4 py-12">
-    <div class="w-full max-w-md">
-        <!-- Contenedor principal con efecto de aparición -->
-        <div class="bg-white rounded-xl shadow-xl overflow-hidden transform transition-all duration-500 hover:shadow-2xl animate-fadeIn">
-            <!-- Encabezado del formulario -->
-            <div class="bg-gradient-to-r from-magenta-500 to-magenta-400 px-6 py-8 rounded-t-xl">
-                <div class="text-center">
-                    <div class="inline-flex items-center justify-center p-2 bg-white bg-opacity-20 rounded-full mb-4">
-                        <i class="fas fa-heartbeat text-white text-2xl"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold text-primary">Iniciar Sesión</h2>
-                    <p class="text-opacity-90 mt-2 text-primary-light">Accede a tu información médica</p>
+{% block content %}
+<!-- Header estilizado -->
+<div class="header-container relative py-20">
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center">
+            <!-- Icono principal animado -->
+            <div class="mb-12">
+                <div class="icon-bg mx-auto pulse-icon">
+                    <i class="fas fa-user-shield text-white text-4xl"></i>
                 </div>
             </div>
-            
-            <!-- Mensajes de error -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="p-4 {% if category == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %} rounded-lg mt-4">
-                            {{ message }}
+
+            <!-- Título principal -->
+            <h1 class="text-6xl md:text-7xl font-bold text-white mb-6 animate-fadeIn">
+                <i class="fas fa-door-open mr-4 bounce-gentle"></i>
+                ¡Bienvenido de vuelta!
+            </h1>
+
+            <p class="text-2xl text-white opacity-90 mb-12 animate-fadeIn" style="animation-delay: 0.2s;">
+                <i class="fas fa-heart-pulse mr-3 text-pink-300"></i>
+                Tu salud te está esperando
+            </p>
+
+            <!-- Tarjeta de bienvenida -->
+            <div class="welcome-card max-w-2xl mx-auto animate-slideInLeft">
+                <div class="flex items-center justify-center mb-6">
+                    <div class="flex space-x-4">
+                        <div class="icon-bg">
+                            <i class="fas fa-clock text-white text-xl rotate-slow"></i>
                         </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-            
-            <!-- Formulario de login -->
-            <div class="p-6 space-y-6">
-                <form class="space-y-5" action="{{ url_for('login') }}" method="POST">
-                    <!-- Campo email -->
-                    <div class="space-y-2">
-                        <label for="email" class="block text-sm font-medium text-gray-700">Correo electrónico</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-envelope text-gray-400"></i>
-                            </div>
-                            <input id="email" name="email" type="email" autocomplete="email" required 
-                                   class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500 transition duration-200 shadow-sm"
-                                   placeholder="tucorreo@ejemplo.com">
+                        <div class="icon-bg" style="animation-delay: 0.5s;">
+                            <i class="fas fa-shield-heart text-white text-xl pulse-icon"></i>
                         </div>
-                    </div>
-                    
-                    <!-- Campo contraseña -->
-                    <div class="space-y-2">
-                        <div class="flex justify-between">
-                            <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
-                            <a href="{{ url_for('forgot_password') }}" class="text-sm text-cyan-500 hover:text-cyan-400 transition duration-200 font-medium">
-                                ¿Olvidaste tu contraseña?
-                            </a>
+                        <div class="icon-bg" style="animation-delay: 1s;">
+                            <i class="fas fa-mobile-alt text-white text-xl float-icon"></i>
                         </div>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-lock text-gray-400"></i>
-                            </div>
-                            <input id="password" name="password" type="password" autocomplete="current-password" required 
-                                   class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500 transition duration-200 shadow-sm"
-                                   placeholder="••••••••">
-                        </div>
-                    </div>
-                    
-                    <!-- Opción recordarme -->
-                    <div class="flex items-center">
-                        <input id="remember-me" name="remember-me" type="checkbox" 
-                               class="h-4 w-4 text-magenta-500 focus:ring-magenta-400 border-gray-300 rounded">
-                        <label for="remember-me" class="ml-2 block text-sm text-gray-700">
-                            Recordarme
-                        </label>
-                    </div>
-                    
-                    <!-- Botón de envío -->
-                    <div>
-                        <button type="submit" 
-                        style="background-color: var(--primary); color: white;"
-                                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium bg-magenta-500 hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-magenta-500 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
-                            Iniciar sesión
-                        </button>
-                    </div>
-                </form>
-                
-                <!-- Separador -->
-                <div class="relative my-6">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-gray-300"></div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Pie del formulario - Registro -->
-            <div class="bg-gray-50 px-6 py-5 rounded-b-xl border-t">
-                <div class="text-center">
-                    <p class="text-gray-600 text-sm">
-                        ¿Aún no tienes una cuenta?
-                        <a href="{{ url_for('register') }}" class="font-semibold text-cyan-500 hover:text-cyan-400 transition">
-                            Regístrate ahora
-                        </a>
-                    </p>
+                <h3 class="text-2xl font-bold text-white mb-4">
+                    <i class="fas fa-sparkles mr-2 text-yellow-300"></i>
+                    Accede a tu mundo de salud digital
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="feature-card animate-slideInLeft" style="animation-delay: 0.4s;">
+                        <i class="fas fa-calendar-check text-cyan-300 text-2xl mb-3 bounce-gentle"></i>
+                        <p class="text-white font-medium">Citas Médicas</p>
+                    </div>
+                    <div class="feature-card animate-fadeIn" style="animation-delay: 0.6s;">
+                        <i class="fas fa-pills text-green-300 text-2xl mb-3 pulse-icon"></i>
+                        <p class="text-white font-medium">Medicamentos</p>
+                    </div>
+                    <div class="feature-card animate-slideInRight" style="animation-delay: 0.8s;">
+                        <i class="fas fa-chart-line text-purple-300 text-2xl mb-3 float-icon"></i>
+                        <p class="text-white font-medium">Seguimiento</p>
+                    </div>
                 </div>
-                <div class="flex justify-center mt-5">
-                    <a href="{{ url_for('register') }}" class="py-2.5 px-6 rounded-lg text-white font-medium bg-cyan-500 hover:bg-cyan-400 transition duration-200 shadow-sm hover:shadow transform hover:scale-[1.02] active:scale-[0.98]">
-                        Crear cuenta gratuita
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Decoración visual -->
-        <div class="text-center mt-8">
-            <div class="flex justify-center space-x-3">
-                <div class="w-3 h-3 rounded-full bg-cyan-300 animate-bounce"></div>
-                <div class="w-3 h-3 rounded-full bg-cyan-400 animate-bounce" style="animation-delay: 0.2s"></div>
-                <div class="w-3 h-3 rounded-full bg-magenta-400 animate-bounce" style="animation-delay: 0.4s"></div>
             </div>
         </div>
     </div>
-</main>
 
-</body>
-</html>
+    <!-- Iconos flotantes decorativos -->
+    <div class="floating-icon top-12 left-8">
+        <i class="fas fa-heartbeat text-5xl text-white pulse-icon"></i>
+    </div>
+    <div class="floating-icon top-24 right-16" style="animation-delay: 1s;">
+        <i class="fas fa-stethoscope text-4xl text-white"></i>
+    </div>
+    <div class="floating-icon bottom-12 left-16" style="animation-delay: 2s;">
+        <i class="fas fa-user-md text-4xl text-white bounce-gentle"></i>
+    </div>
+    <div class="floating-icon bottom-24 right-8" style="animation-delay: 0.5s;">
+        <i class="fas fa-hospital text-3xl text-white float-icon"></i>
+    </div>
+    <div class="floating-icon top-1/3 left-1/4" style="animation-delay: 1.5s;">
+        <i class="fas fa-syringe text-3xl text-white rotate-slow"></i>
+    </div>
+    <div class="floating-icon top-1/2 right-1/4" style="animation-delay: 2.5s;">
+        <i class="fas fa-thermometer text-3xl text-white"></i>
+    </div>
+
+    <!-- Elementos decorativos -->
+    <div class="decorative-elements">
+        <div class="floating-shape shape-1">
+            <i class="fas fa-dna text-8xl text-white"></i>
+        </div>
+        <div class="floating-shape shape-2">
+            <i class="fas fa-microscope text-7xl text-white"></i>
+        </div>
+        <div class="floating-shape shape-3">
+            <i class="fas fa-x-ray text-6xl text-white"></i>
+        </div>
+        <div class="floating-shape shape-4">
+            <i class="fas fa-brain text-7xl text-white"></i>
+        </div>
+    </div>
+</div>
+<br><br>
+<!-- Contenedor del formulario -->
+<div class="container mx-auto px-4 relative" style="margin-top: -120px;">
+    <div class="max-w-md mx-auto">
+        <div class="form-container rounded-2xl shadow-2xl overflow-hidden animate-fadeIn"
+            style="animation-delay: 0.5s;">
+
+            <!-- Encabezado del formulario -->
+            <div
+                class="bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 px-8 py-10 text-center relative overflow-hidden">
+                <div class="relative z-10">
+                    <div
+                        class="inline-flex items-center justify-center p-4 bg-white bg-opacity-20 rounded-full mb-6 pulse-icon">
+                        <i class="fas fa-sign-in-alt text-white text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-white mb-3">
+                        <i class="fas fa-key mr-3 bounce-gentle"></i>
+                        Iniciar Sesión
+                    </h2>
+                    <p class="text-white opacity-90 text-lg">
+                        <i class="fas fa-user-circle mr-2"></i>
+                        Accede a tu cuenta MediTime
+                    </p>
+                </div>
+                <!-- Patrón de fondo -->
+                <div class="absolute inset-0 opacity-10">
+                    <div class="absolute top-4 left-4">
+                        <i class="fas fa-plus text-2xl text-white float-icon"></i>
+                    </div>
+                    <div class="absolute top-8 right-8">
+                        <i class="fas fa-heartbeat text-xl text-white" style="animation: pulse 3s infinite;"></i>
+                    </div>
+                    <div class="absolute bottom-4 left-8">
+                        <i class="fas fa-shield-heart text-xl text-white bounce-gentle"></i>
+                    </div>
+                    <div class="absolute bottom-8 right-4">
+                        <i class="fas fa-medical-kit text-2xl text-white rotate-slow"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensajes flash -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div
+                class="p-4 {% if category == 'error' %}bg-red-100 text-red-700 border-l-4 border-red-500{% else %}bg-green-100 text-green-700 border-l-4 border-green-500{% endif %}">
+                <div class="flex items-center">
+                    <i
+                        class="{% if category == 'error' %}fas fa-exclamation-triangle{% else %}fas fa-check-circle{% endif %} mr-3 text-xl"></i>
+                    {{ message }}
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <!-- Formulario de login -->
+            <div class="p-8 space-y-8">
+                <form class="space-y-6" action="{{ url_for('login') }}" method="POST">
+
+                    <!-- Campo email -->
+                    <div class="input-group">
+                        <input id="email" name="email" type="email" autocomplete="email" required class="form-input"
+                            placeholder="Ingresa tu correo electrónico">
+                        <i class="fas fa-envelope input-icon"></i>
+                    </div>
+
+                    <!-- Campo contraseña -->
+                    <div class="input-group">
+                        <input id="password" name="password" type="password" autocomplete="current-password" required
+                            class="form-input" placeholder="Ingresa tu contraseña">
+                        <i class="fas fa-lock input-icon"></i>
+                    </div>
+                    <br>
+
+                    <a href="{{ url_for('forgot_password') }}"
+                        class="block mx-auto text-center text-cyan-500 hover:text-cyan-400 font-semibold w-fit">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+
+                    <!-- Botón de inicio de sesión -->
+                    <div class="pt-4">
+                        <button type="submit" class="btn-primary w-full">
+                            <i class="fas fa-rocket mr-3"></i>
+                            Acceder
+                            <i class="fas fa-arrow-right ml-3"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Pie del formulario -->
+            <div class="bg-gradient-to-r from-cyan-50 via-purple-50 to-pink-50 px-8 py-6 border-t">
+                <div class="text-center space-y-4">
+                    <p class="text-gray-600 text-lg flex items-center justify-center">
+                        <i class="fas fa-user-plus text-cyan-500 mr-3"></i>
+                        ¿Aún no tienes una cuenta?
+                    </p>
+                    <a href="{{ url_for('register') }}" class="btn-secondary inline-flex items-center">
+                        <i class="fas fa-sparkles mr-3"></i>
+                        Crear cuenta gratuita
+                        <i class="fas fa-external-link-alt ml-3"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información de seguridad -->
+        <div class="text-center mt-8 animate-fadeIn" style="animation-delay: 1s;">
+            <div class="flex justify-center space-x-6">
+                <div class="w-5 h-5 rounded-full bg-cyan-400 bounce-gentle"></div>
+                <div class="w-5 h-5 rounded-full bg-purple-400 bounce-gentle" style="animation-delay: 0.3s"></div>
+                <div class="w-5 h-5 rounded-full bg-pink-400 bounce-gentle" style="animation-delay: 0.6s"></div>
+            </div>
+            <div class="mt-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-200">
+                <p class="text-gray-600 font-medium flex items-center justify-center">
+                    <i class="fas fa-shield-alt text-green-500 mr-3 text-xl pulse-icon"></i>
+                    Tu información está protegida con encriptación de nivel bancario
+                    <i class="fas fa-lock text-green-500 ml-3"></i>
+                </p>
+            </div>
+
+            <!-- Características de seguridad -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <div class="bg-white rounded-xl p-4 shadow-lg border animate-slideInLeft"
+                    style="animation-delay: 1.2s;">
+                    <i class="fas fa-fingerprint text-3xl text-blue-500 mb-3 pulse-icon"></i>
+                    <p class="font-semibold text-gray-700">Autenticación Segura</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-lg border animate-fadeIn" style="animation-delay: 1.4s;">
+                    <i class="fas fa-eye-slash text-3xl text-purple-500 mb-3 bounce-gentle"></i>
+                    <p class="font-semibold text-gray-700">Privacidad Total</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-lg border animate-slideInRight"
+                    style="animation-delay: 1.6s;">
+                    <i class="fas fa-cloud-upload-alt text-3xl text-green-500 mb-3 float-icon"></i>
+                    <p class="font-semibold text-gray-700">Respaldo en la Nube</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Animaciones suaves para inputs
+        const inputs = document.querySelectorAll('.form-input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function () {
+                this.parentElement.style.transform = 'translateY(-3px)';
+                this.parentElement.style.boxShadow = '0 10px 40px rgba(6, 182, 212, 0.15)';
+            });
+
+            input.addEventListener('blur', function () {
+                this.parentElement.style.transform = 'translateY(0)';
+                this.parentElement.style.boxShadow = 'none';
+            });
+        });
+
+        // Efectos hover para iconos flotantes
+        const floatingIcons = document.querySelectorAll('.floating-icon');
+        floatingIcons.forEach(icon => {
+            icon.addEventListener('mouseenter', function () {
+                this.style.transform = 'scale(1.3)';
+                this.style.opacity = '1';
+            });
+
+            icon.addEventListener('mouseleave', function () {
+                this.style.transform = 'scale(1)';
+                this.style.opacity = '0.7';
+            });
+        });
+
+        // Efecto de escritura para el placeholder
+        function typewriterEffect(element, text, delay = 100) {
+            let i = 0;
+            element.placeholder = '';
+            const timer = setInterval(() => {
+                if (i < text.length) {
+                    element.placeholder += text.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(timer);
+                }
+            }, delay);
+        }
+
+        // Aplicar efecto de escritura con delay
+        setTimeout(() => {
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+
+            if (emailInput && passwordInput) {
+                typewriterEffect(emailInput, 'tu-email@ejemplo.com', 150);
+                setTimeout(() => {
+                    typewriterEffect(passwordInput, '••••••••', 200);
+                }, 2000);
+            }
+        }, 1000);
+    });
+</script>
+<br><br>
+{% endblock %}
