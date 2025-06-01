@@ -502,11 +502,9 @@ if (!document.querySelector('#modal-styles')) {
     styleSheet.textContent = additionalCSS;
     document.head.appendChild(styleSheet);
 }
-<script>
   function buscarPorCategoria(categoria) {
     window.location.href = `/medicamentos?categoria=${encodeURIComponent(categoria)}`;
   }
-</script>
 
 </script>
 {% endblock %}
